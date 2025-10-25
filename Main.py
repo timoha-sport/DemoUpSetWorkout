@@ -11,13 +11,13 @@ from telebot import types
 from Profile import FitnessCoefficient
 from Workouts import ExerciseCalculator
 
-bot = telebot.TeleBot("7870591012:AAENhnsdz_kwPVcklza_qY32qUpJ-jQ7oXE")
+bot = telebot.TeleBot("8472235653:AAH3udD4YKL23XKbX99t7igKHW5lGGT4074")
 waiting_for_input = ""
 
 @bot.message_handler(commands=['start'])
 def start(message):
   welcome = f"""<b>{message.from_user.first_name}</b>, Привет!
-  Меня зовут UpSetBot, я тебя приобщу к ЗОЖ (здоровому образу жизни).
+  Меня зовут Арни, я тебя приобщу к ЗОЖ (здоровому образу жизни).
   Вноси свои физические данные в разделе "Изменить профиль" и выбирай тренировку по душе!
     """
   photo = open(r"D:\Рабочий стол\Упражнения\welcome.jpg",'rb')
