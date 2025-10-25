@@ -11,33 +11,33 @@ from telebot import types
 from Profile import FitnessCoefficient
 from Workouts import ExerciseCalculator
 
-bot = telebot.TeleBot("8472235653:AAH3udD4YKL23XKbX99t7igKHW5lGGT4074")
+bot = telebot.TeleBot("8438729431:AAEZdOQT7de43BWCmDYCVNoeckb4oiIWHTI")
 waiting_for_input = ""
 
 @bot.message_handler(commands=['start'])
 def start(message):
-  welcome = f"""<b>{message.from_user.first_name}</b>, Привет!
-  Меня зовут Арни, я тебя приобщу к ЗОЖ (здоровому образу жизни).
+  welcome = f"""{message.from_user.first_name}, Привет!
+  Меня зовут Арнольд🦍, я тебя приобщу к ЗОЖ (здоровому образу жизни).
   Вноси свои физические данные в разделе "Изменить профиль" и выбирай тренировку по душе!
+  Открой /menu, что бы ознакомиться с функционалом.
     """
-  photo = open(r"D:\Рабочий стол\Упражнения\welcome.jpg",'rb')
-  bot.send_photo(message.chat.id, photo, welcome, parse_mode='html')
+  bot.send_message(message.chat.id, welcome)
 
 
 @bot.message_handler(commands=['menu'])
 def menu(message):
     markup = types.InlineKeyboardMarkup()
-    button_profile = types.InlineKeyboardButton(text='Профиль', callback_data='profile')
+    button_profile = types.InlineKeyboardButton(text='Профиль🪪', callback_data='profile')
     markup.add(button_profile)
-    button_edit_profile = types.InlineKeyboardButton(text='Изменить профиль', callback_data='edit_profile')
+    button_edit_profile = types.InlineKeyboardButton(text='Изменить профиль⚙️', callback_data='edit_profile')
     markup.add(button_edit_profile)
-    button_workout = types.InlineKeyboardButton(text='Готовые тренировки', callback_data='workout')
+    button_workout = types.InlineKeyboardButton(text='Готовые тренировки✅', callback_data='workout')
     markup.add(button_workout)
-    button_notes = types.InlineKeyboardButton(text='Личная тренировка', callback_data='notes')
+    button_notes = types.InlineKeyboardButton(text='Личная тренировка📃', callback_data='notes')
     markup.add(button_notes)
-    button_reminder = types.InlineKeyboardButton(text='Установить напоминание', callback_data='reminder')
+    button_reminder = types.InlineKeyboardButton(text='Установить напоминание📆', callback_data='reminder')
     markup.add(button_reminder)
-    button_exercises = types.InlineKeyboardButton(text='Сборник упражнений', callback_data='exercises')
+    button_exercises = types.InlineKeyboardButton(text='Сборник упражнений📕', callback_data='exercises')
     markup.add(button_exercises)
     bot.send_message(message.chat.id, text='――――🦾Все функции бота!🗂――――', reply_markup=markup, parse_mode='html')
 
@@ -289,179 +289,159 @@ def callback(callback):
     global waiting_for_input
     if callback.data == 'profile':
         help_text = f"""
-        Ваш профиль:
-        Вес: {FitnessCoefficient.weight}
-        Рост: {FitnessCoefficient.height}
-        Возраст: {FitnessCoefficient.age}
-        Уровень: {FitnessCoefficient.fitness_level}
+        🗿Ваш профиль:
+        ┏Вес: {FitnessCoefficient.weight}
+        ┠Рост: {FitnessCoefficient.height}
+        ┠Возраст: {FitnessCoefficient.age}
+        ┗Уровень: {FitnessCoefficient.fitness_level}
                     """
         bot.send_message(callback.message.chat.id, text=help_text)
 
     if callback.data == 'edit_profile':
         markup = types.ReplyKeyboardMarkup()
-        button_weight = types.InlineKeyboardButton(text='Ввести вес', callback_data='weight')
+        button_weight = types.InlineKeyboardButton(text='Ввести вес⚖️', callback_data='weight')
         markup.add(button_weight)
-        button_height = types.InlineKeyboardButton(text='Ввести рост', callback_data='height')
+        button_height = types.InlineKeyboardButton(text='Ввести рост🦒', callback_data='height')
         markup.add(button_height)
-        button_age = types.InlineKeyboardButton(text='Ввести возраст', callback_data='age')
+        button_age = types.InlineKeyboardButton(text='Ввести возраст🎂', callback_data='age')
         markup.add(button_age)
-        button_fitness_level = types.InlineKeyboardButton(text='Выбрать уровень подготовки', callback_data='fitness_level')
+        button_fitness_level = types.InlineKeyboardButton(text='Выбрать уровень подготовки📊', callback_data='fitness_level')
         markup.add(button_fitness_level)
         bot.send_message(callback.message.chat.id, text='Профиль', reply_markup=markup, parse_mode='html')
 
-
-    if callback.data == 'fitness_level':
-        markup = types.ReplyKeyboardMarkup()
-        button_beginner = types.InlineKeyboardButton(text='Начинающий', callback_data='beginner')
-        markup.add(button_beginner)
-        button_intermediate = types.InlineKeyboardButton(text='Продвинутый', callback_data='intermediate')
-        markup.add(button_intermediate)
-        button_advanced = types.InlineKeyboardButton(text='Профессионал', callback_data='advanced')
-        markup.add(button_advanced)
-        bot.send_message(callback.message.chat.id, text='Уровень подготовки', reply_markup=markup, parse_mode='html')
-    if callback.data == 'beginner':
-        FitnessCoefficient.fitness_level = "beginner"
-        bot.send_message(callback.message.chat.id, text="✅ Начинающий уровень подготовки сохранён!")
-    if callback.data == 'intermediate':
-        FitnessCoefficient.fitness_level = "intermediate"
-        bot.send_message(callback.message.chat.id, text="✅ Продвинутый уровень подготовки сохранён!")
-    if callback.data == 'advanced':
-        FitnessCoefficient.fitness_level = "advanced"
-        bot.send_message(callback.message.chat.id, text="✅ Профессиональный уровень подготовки сохранён!")
-
     if callback.data == 'workout':
         markup = types.InlineKeyboardMarkup()
-        button_strength = types.InlineKeyboardButton(text='Силовая (Базовая)', callback_data='strength')
+        button_strength = types.InlineKeyboardButton(text='Силовая (Базовая)🦍', callback_data='strength')
         markup.add(button_strength)
-        button_functional = types.InlineKeyboardButton(text='Функциональная (Взрывная сила)', callback_data='functional')
+        button_functional = types.InlineKeyboardButton(text='Функциональная (Взрывная сила)🐂', callback_data='functional')
         markup.add(button_functional)
-        button_wellness = types.InlineKeyboardButton(text='Оздоровительная (Для осанки)', callback_data='wellness')
+        button_wellness = types.InlineKeyboardButton(text='Оздоровительная (Для осанки)🦙', callback_data='wellness')
         markup.add(button_wellness)
-        button_endurance = types.InlineKeyboardButton(text='На Выносливость (Круговая)', callback_data='endurance')
+        button_endurance = types.InlineKeyboardButton(text='На Выносливость (Круговая)🐫', callback_data='endurance')
         markup.add(button_endurance)
-        button_for_press = types.InlineKeyboardButton(text='Для Пресса и Координации', callback_data='for_press')
+        button_for_press = types.InlineKeyboardButton(text='Для Пресса и Координации🦈', callback_data='for_press')
         markup.add(button_for_press)
-        button_lower_strength = types.InlineKeyboardButton(text='Нижняя Сила (Ноги и кор)', callback_data='lower_strength')
+        button_lower_strength = types.InlineKeyboardButton(text='Нижняя Сила (Ноги и кор)🦩', callback_data='lower_strength')
         markup.add(button_lower_strength)
-        button_combination = types.InlineKeyboardButton(text='Связка "Турник + Брусья"', callback_data='combination')
+        button_combination = types.InlineKeyboardButton(text='Связка "Турник + Брусья"🐒', callback_data='combination')
         markup.add(button_combination)
-        button_full_body = types.InlineKeyboardButton(text='Фулл-Бади (На все тело)', callback_data='full_body')
+        button_full_body = types.InlineKeyboardButton(text='Фулл-Бади (На все тело)🐊', callback_data='full_body')
         markup.add(button_full_body)
-        button_street_workout = types.InlineKeyboardButton(text='Уличный Воркаут (Статика и динамика)', callback_data='street_workout')
+        button_street_workout = types.InlineKeyboardButton(text='Уличный Воркаут (Статика и динамика)🐆', callback_data='street_workout')
         markup.add(button_street_workout)
-        button_calorie_burning = types.InlineKeyboardButton(text='ВИИТ (Сжигание калорий)', callback_data='calorie_burning')
+        button_calorie_burning = types.InlineKeyboardButton(text='ВИИТ (Сжигание калорий)🐅', callback_data='calorie_burning')
         markup.add(button_calorie_burning)
         bot.send_message(callback.message.chat.id, text='Готовые тренировки', reply_markup=markup, parse_mode='html')
     if callback.data == 'strength':
         strength_text = f"""
-        Тренировка: Силовая (Базовая)
-Цель: Развитие максимальной силы.
-Отдых: 90-120 секунд.
-1.Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips()}раз
-3.Приседания:  4 подхода по {ExerciseCalculator.calculate_squats()}раз
-4.Планка (сек):  3 подхода по {ExerciseCalculator.calculate_plank()}сек
+        Тренировка: Силовая (Базовая)🦍
+Цель: Развитие максимальной силы.🏆
+Отдых: 90-120 секунд.⏱️
+1.➣Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
+2.➣Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips()}раз
+3.➣Приседания:  4 подхода по {ExerciseCalculator.calculate_squats()}раз
+4.➣Планка (сек):  3 подхода по {ExerciseCalculator.calculate_plank()}сек
             """
         bot.send_message(callback.message.chat.id, text=strength_text)
     if callback.data == 'functional':
         functional_text = f"""
-        Тренировка: Функциональная (Взрывная сила)
-Цель: Развитие мощности.
-Отдых: 60-75 секунд.
-1.Подтягивания с усилием: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.Отжимания на брусьях взрывные: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-3.Берпи: 3 подхода по {ExerciseCalculator.calculate_burpees()}раз
-4.Прыжки из приседа: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
+        Тренировка: Функциональная (Взрывная сила)🐂
+Цель: Развитие мощности.🏆
+Отдых: 60-75 секунд.⏱️
+1.➣Подтягивания с усилием: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
+2.➣Отжимания на брусьях взрывные: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
+3.➣Берпи: 3 подхода по {ExerciseCalculator.calculate_burpees()}раз
+4.➣Прыжки из приседа: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
             """
         bot.send_message(callback.message.chat.id, text=functional_text)
     if callback.data == 'wellness':
         wellness_text = f"""
-        Тренировка: Оздоровительная (Для осанки)
-Цель: Укрепление спины и кора.
-Отдых: 30-45 секунд.
-1.Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time()}сек
-2.Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
-3.Отжимания на брусьях (медленно): 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-4.Планка(сек): 3 подхода по {ExerciseCalculator.calculate_plank()}сек
+        Тренировка: Оздоровительная (Для осанки)🦙
+Цель: Укрепление спины и кора.🏆
+Отдых: 30-45 секунд.⏱️
+1.➣Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time()}сек
+2.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
+3.➣Отжимания на брусьях (медленно): 3 подхода по {ExerciseCalculator.calculate_dips()}раз
+4.➣Планка(сек): 3 подхода по {ExerciseCalculator.calculate_plank()}сек
             """
         bot.send_message(callback.message.chat.id, text=wellness_text)
     if callback.data == 'endurance':
         endurance_text = f"""
-         Тренировка: На Выносливость (Круговая)       
-Цель: Развитие выносливости.
-Инструкция: Все упражнения подряд, отдых 2 мин после круга. 3-5 кругов.
-1.Подтягивания (макс. раз)
-2.Отжимания на брусьях ({ExerciseCalculator.calculate_dips()} раз)
-3.Приседания ({ExerciseCalculator.calculate_squats()} раз)
-4.Берпи ({ExerciseCalculator.calculate_burpees()} раз)
+         Тренировка: На Выносливость (Круговая)🐫      
+Цель: Развитие выносливости.🏆
+Инструкция: Все упражнения подряд, отдых 2 мин после круга. 3-5 кругов.⏱️
+1.➣Подтягивания (макс. раз)
+2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()} раз)
+3.➣Приседания ({ExerciseCalculator.calculate_squats()} раз)
+4.➣Берпи ({ExerciseCalculator.calculate_burpees()} раз)
             """
         bot.send_message(callback.message.chat.id, text=endurance_text)
     if callback.data == 'for_press':
         for_press_text = f"""
-        Тренировка: Для Пресса и Координации
-Цель: Проработка кора.
-Отдых: 45-60 секунд.
-1.Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
-2.Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
-3.Скручивания: 3 подхода по {ExerciseCalculator.calculate_crunches()}раз
-4.Велосипед: 3 подхода по {ExerciseCalculator.calculate_bicycle()}раз
+        Тренировка: Для Пресса и Координации🦈
+Цель: Проработка кора.🏆
+Отдых: 45-60 секунд.⏱️
+1.➣Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
+2.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
+3.➣Скручивания: 3 подхода по {ExerciseCalculator.calculate_crunches()}раз
+4.➣Велосипед: 3 подхода по {ExerciseCalculator.calculate_bicycle()}раз
             """
         bot.send_message(callback.message.chat.id, text=for_press_text)
     if callback.data == 'lower_strength':
         lower_strength_text = f"""
-        Тренировка: Нижняя Сила (Ноги и кор)
-Цель: Развитие низа тела.
-Отдых: 60 секунд.
-1.Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats()}раз
-2.Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
-3.Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
-4.Выпады: 3 подхода по {ExerciseCalculator.calculate_lunges()}раз
+        Тренировка: Нижняя Сила (Ноги и кор)🦩
+Цель: Развитие низа тела.🏆
+Отдых: 60 секунд.⏱️
+1.➣Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats()}раз
+2.➣Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
+3.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
+4.➣Выпады: 3 подхода по {ExerciseCalculator.calculate_lunges()}раз
             """
         bot.send_message(callback.message.chat.id, text=lower_strength_text)
     if callback.data == 'combination':
         combination_text = f"""
-        Тренировка: Связка "Турник + Брусья"
-Цель: Интенсивная проработка верха тела.
-Инструкция: Упражнения парами (суперсеты). Отдых 90 сек после пары.
+        Тренировка: Связка "Турник + Брусья"🐒
+Цель: Интенсивная проработка верха тела.🏆
+Инструкция: Упражнения парами (суперсеты). Отдых 90 сек после пары.⏱️
 Суперсет 1 (4 подхода):
-    *Подтягивания ({ExerciseCalculator.calculate_pullups()})
-    *Отжимания на брусьях ({ExerciseCalculator.calculate_dips()})
+    1.➣Подтягивания ({ExerciseCalculator.calculate_pullups()})
+    2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()})
 Суперсет 2 (3 подхода):
-    *Подъем ног в висе ({ExerciseCalculator.calculate_leg_raises()})
-    *Отжимания от пола ({ExerciseCalculator.calculate_pushups()})
+    1.➣Подъем ног в висе ({ExerciseCalculator.calculate_leg_raises()})
+    2.➣Отжимания от пола ({ExerciseCalculator.calculate_pushups()})
             """
         bot.send_message(callback.message.chat.id, text=combination_text)
     if callback.data == 'full_body':
         full_body_text = f"""
-        Тренировка: Фулл-Бади (На все тело)
-Цель: Равномерная проработка.
-Отдых: 60-75 секунд.
-1.Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-3.Приседания: 3 подхода по {ExerciseCalculator.calculate_squats()}раз
-4.Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
+        Тренировка: Фулл-Бади (На все тело)🐊
+Цель: Равномерная проработка.🏆
+Отдых: 60-75 секунд.⏱️
+1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
+2.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
+3.➣Приседания: 3 подхода по {ExerciseCalculator.calculate_squats()}раз
+4.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
             """
         bot.send_message(callback.message.chat.id, text=full_body_text)
     if callback.data == 'street_workout':
         street_workout_text = f"""
-        Тренировка: Уличный Воркаут (Статика и динамика)
-Цель: Развитие силовой выносливости.
-Отдых: 90 секунд.
-1.Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support()}раз
-3.Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-4.Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
+        Тренировка: Уличный Воркаут (Статика и динамика)🐆
+Цель: Развитие силовой выносливости.🏆
+Отдых: 90 секунд.⏱️
+1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
+2.➣Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support()}раз
+3.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
+4.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
             """
         bot.send_message(callback.message.chat.id, text=street_workout_text)
     if callback.data == 'street_workout':
         street_workout_text = f"""
-        Тренировка: ВИИТ (Сжигание калорий)
-Цель: Максимальная интенсивность.
-Инструкция: 40 сек работа / 20 сек отдых. 3-5 кругов.
-1.Берпи
-2.Подтягивания (или вис с подъемом колен)
-3.Отжимания на брусьях
-4.Приседания с выпрыгиванием
+        Тренировка: ВИИТ (Сжигание калорий)🐅
+Цель: Максимальная интенсивность.🏆
+Инструкция: 40 сек работа / 20 сек отдых. 3-5 кругов.⏱️
+1.➣Берпи
+2.➣Подтягивания (или вис с подъемом колен)
+3.➣Отжимания на брусьях
+4.➣Приседания с выпрыгиванием
             """
         bot.send_message(callback.message.chat.id, text=street_workout_text)
 
@@ -549,32 +529,32 @@ def processing(message):
         video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1458561831-640_adpp_is.mp4", 'rb')
         bot.send_video(message.from_user.id, video, parse_mode='html')
 
-    if message.text == 'Ввести вес':
+    if message.text == 'Ввести вес⚖️':
         waiting_for_input = 'weight'
         bot.send_message(message.chat.id, text="Введите свой вес(кг):")
-    if message.text == 'Ввести рост':
+    if message.text == 'Ввести рост🦒':
         waiting_for_input = 'height'
         bot.send_message(message.chat.id, text="Введите свой рост(см):")
-    if message.text == 'Ввести возраст':
+    if message.text == 'Ввести возраст🎂':
         waiting_for_input = 'age'
         bot.send_message(message.chat.id, text="Введите свой возраст:")
-    if message.text == 'Выбрать уровень подготовки':
+    if message.text == 'Выбрать уровень подготовки📊':
         markup = types.ReplyKeyboardMarkup()
-        button_beginner = types.InlineKeyboardButton(text='Начинающий', callback_data='beginner')
+        button_beginner = types.InlineKeyboardButton(text='Начинающий🥉', callback_data='beginner')
         markup.add(button_beginner)
-        button_intermediate = types.InlineKeyboardButton(text='Продвинутый', callback_data='intermediate')
+        button_intermediate = types.InlineKeyboardButton(text='Продвинутый🥈', callback_data='intermediate')
         markup.add(button_intermediate)
-        button_advanced = types.InlineKeyboardButton(text='Профессионал', callback_data='advanced')
+        button_advanced = types.InlineKeyboardButton(text='Профессионал🥇', callback_data='advanced')
         markup.add(button_advanced)
         bot.send_message(message.chat.id, text='Уровень подготовки', reply_markup=markup, parse_mode='html')
-    if message.text == 'Начинающий':
+    if message.text == 'Начинающий🥉':
         FitnessCoefficient.fitness_level = "beginner"
-        bot.send_message(message.chat.id, text="✅ Начинающий уровень подготовки сохранён!")
-    if message.text == 'Продвинутый':
+        bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!")
+    if message.text == 'Продвинутый🥈':
         FitnessCoefficient.fitness_level = "intermediate"
-        bot.send_message(message.chat.id, text="✅ Продвинутый уровень подготовки сохранён!")
-    if message.text == 'Профессионал':
+        bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!")
+    if message.text == 'Профессионал🥇':
         FitnessCoefficient.fitness_level = "advanced"
-        bot.send_message(message.chat.id, text="✅ Профессиональный уровень подготовки сохранён!")
+        bot.send_message(message.chat.id, text="✅ Профессиональный🥇 уровень подготовки сохранён!")
 
 bot.polling(none_stop=True)
