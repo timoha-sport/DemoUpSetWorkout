@@ -355,6 +355,10 @@ def callback(callback):
         Тренировка: Силовая (Базовая)🦍
 Цель: Развитие максимальной силы.🏆
 Отдых: 90-120 секунд.⏱️
+Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 4
+        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 4
+        + Calories.calculate_exercise_calories("Приседания", ExerciseCalculator.calculate_squats(), FitnessCoefficient.weight) * 4
+        + Calories.calculate_exercise_calories("Планка (сек)", ExerciseCalculator.calculate_plank(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
 1.➣Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips()}раз
 3.➣Приседания:  4 подхода по {ExerciseCalculator.calculate_squats()}раз
