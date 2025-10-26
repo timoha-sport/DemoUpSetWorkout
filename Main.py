@@ -470,18 +470,59 @@ def callback(callback):
         bot.send_message(callback.message.chat.id, text=set_text)
 
     if callback.data == 'exercises':
-        markup = types.ReplyKeyboardMarkup()
-        button_push_ups = types.InlineKeyboardButton(text='📖Отжимания', callback_data='push-ups')
-        markup.add(button_push_ups)
-        button_squats = types.InlineKeyboardButton(text='📖Приседания', callback_data='squats')
-        markup.add(button_squats)
-        button_pull_ups = types.InlineKeyboardButton(text='📖Подтягивания', callback_data='pull_ups')
-        markup.add(button_pull_ups)
-        button_bars = types.InlineKeyboardButton(text='📖Отжимания на брусьях', callback_data='bars')
+        markup = types.InlineKeyboardMarkup()
+        button_horizontal = types.InlineKeyboardButton(text='На турнике', callback_data='horizontal')
+        markup.add(button_horizontal)
+        button_bars = types.InlineKeyboardButton(text='На брусьях', callback_data='bars')
         markup.add(button_bars)
-        button_twisting = types.InlineKeyboardButton(text='📖Скручивания', callback_data='bars')
-        markup.add(button_twisting)
-        bot.send_message(callback.message.chat.id, text='Сборник упражнений', reply_markup=markup, parse_mode='html')
+        button_inventory = types.InlineKeyboardButton(text='Без инвентаря', callback_data='inventory')
+        markup.add(button_inventory)
+        bot.send_message(callback.message.chat.id, text='Сборник упражнений📕', reply_markup=markup, parse_mode='html')
+
+    if callback.data == 'horizontal':
+        markup = types.ReplyKeyboardMarkup()
+        # Турник
+        button_pull_ups = types.InlineKeyboardButton(text='Подтягивания💪', callback_data='pull_ups')
+        markup.add(button_pull_ups)
+        button_hang = types.InlineKeyboardButton(text='Вис на турнике🏋️', callback_data='hang')
+        markup.add(button_hang)
+        button_leg_raises = types.InlineKeyboardButton(text='Подъем ног в висе🦵', callback_data='leg_raises')
+        markup.add(button_leg_raises)
+        bot.send_message(callback.message.chat.id, text='На турнике', reply_markup=markup, parse_mode='html')
+
+    if callback.data == 'bars':
+        markup = types.ReplyKeyboardMarkup()
+        # Брусья
+        button_dips = types.InlineKeyboardButton(text='Отжимания на брусьях📊', callback_data='dips')
+        markup.add(button_dips)
+        button_l_sit = types.InlineKeyboardButton(text='Уголок на брусьях🪑', callback_data='l_sit')
+        markup.add(button_l_sit)
+        button_front_lever = types.InlineKeyboardButton(text='Передний вис на брусьях🌟', callback_data='front_lever')
+        markup.add(button_front_lever)
+        bot.send_message(callback.message.chat.id, text='На брусьях', reply_markup=markup, parse_mode='html')
+
+    if callback.data == 'inventory':
+        markup = types.ReplyKeyboardMarkup()
+        # Без инвентаря
+        button_squats = types.InlineKeyboardButton(text='Приседания🏃', callback_data='squats')
+        markup.add(button_squats)
+        button_pistol_squats = types.InlineKeyboardButton(text='Приседания на одной ноге🦵', callback_data='pistol_squats')
+        markup.add(button_pistol_squats)
+        button_lunges = types.InlineKeyboardButton(text='Выпады👣', callback_data='lunges')
+        markup.add(button_lunges)
+        button_jump_squats = types.InlineKeyboardButton(text='Прыжки из приседа🦘', callback_data='jump_squats')
+        markup.add(button_jump_squats)
+        button_burpees = types.InlineKeyboardButton(text='Берпи⚡', callback_data='burpees')
+        markup.add(button_burpees)
+        button_pushups = types.InlineKeyboardButton(text='Отжимания от пола🔄', callback_data='pushups')
+        markup.add(button_pushups)
+        button_plank = types.InlineKeyboardButton(text='Планка⏱️', callback_data='plank')
+        markup.add(button_plank)
+        button_crunches = types.InlineKeyboardButton(text='Скручивания🌀', callback_data='crunches')
+        markup.add(button_crunches)
+        button_bicycle = types.InlineKeyboardButton(text='Велосипед🚴', callback_data='bicycle')
+        markup.add(button_bicycle)
+        bot.send_message(callback.message.chat.id, text='Без инвентаря', reply_markup=markup, parse_mode='html')
 
     bot.answer_callback_query(callback.id, text="")
 
@@ -523,22 +564,6 @@ def number_handler(message):
 @bot.message_handler(content_types=['text'])
 def processing(message):
     global waiting_for_input
-    if message.text == '📖Отжимания':
-        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1307740744-640_adpp_is.mp4", 'rb')
-        bot.send_video(message.from_user.id, video, parse_mode='html')
-    if message.text == '📖Приседания':
-        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-819399998-640_adpp_is.mp4", 'rb')
-        bot.send_video(message.from_user.id, video, parse_mode='html')
-    if message.text == '📖Подтягивания':
-        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1354428390-640_adpp_is.mp4", 'rb')
-        bot.send_video(message.from_user.id, video, parse_mode='html')
-    if message.text == '📖Отжимания на брусьях':
-        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1175028606-640_adpp_is.mp4", 'rb')
-        bot.send_video(message.from_user.id, video, parse_mode='html')
-    if message.text == '📖Скручивания':
-        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1458561831-640_adpp_is.mp4", 'rb')
-        bot.send_video(message.from_user.id, video, parse_mode='html')
-
     if message.text == 'Ввести вес⚖️':
         waiting_for_input = 'weight'
         bot.send_message(message.chat.id, text="Введите свой вес(кг):")
@@ -566,6 +591,53 @@ def processing(message):
     if message.text == 'Профессионал🥇':
         FitnessCoefficient.fitness_level = "advanced"
         bot.send_message(message.chat.id, text="✅ Профессиональный🥇 уровень подготовки сохранён!")
-
+    # Турник
+    if message.text == 'Подтягивания💪':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1354428390-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Вис на турнике🏋️':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1758996530-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Подъем ног в висе🦵':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1553010542-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    # Брусья
+    if message.text == 'Отжимания на брусьях📊':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1175028606-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Уголок на брусьях🪑':
+        photo = open(r"D:\Рабочий стол\Упражнения\4fab467e6f69f505d893579771f680ef.jpg", 'rb')
+        bot.send_photo(message.from_user.id, photo, parse_mode='html')
+    if message.text == 'Передний вис на брусьях🌟':
+        photo = open(r"D:\Рабочий стол\Упражнения\8f310a0667e011b0a59f85b52d6127f4.jpg", 'rb')
+        bot.send_photo(message.from_user.id, photo, parse_mode='html')
+    # Без инвентаря
+    if message.text == 'Приседания🏃':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-819399998-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Приседания на одной ноге🦵':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1286339867-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Выпады👣':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-819176128-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Прыжки из приседа🦘':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1566551937-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Берпи⚡':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-478074290-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Отжимания от пола🔄':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1307740744-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Планка⏱️':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-966411966-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Скручивания🌀':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-472821189-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
+    if message.text == 'Велосипед🚴':
+        video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1389749311-640_adpp_is.mp4", 'rb')
+        bot.send_video(message.from_user.id, video, parse_mode='html')
 
 bot.polling(none_stop=True)
