@@ -14,6 +14,11 @@ from Workouts import ExerciseCalculator
 bot = telebot.TeleBot("8438729431:AAEZdOQT7de43BWCmDYCVNoeckb4oiIWHTI")
 waiting_for_input = ""
 user_name = ""
+default = {
+    "def_weight": " (по умолчанию)",
+    "def_height": " (по умолчанию)",
+    "def_age": " (по умолчанию)"
+}
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -293,9 +298,9 @@ def callback(callback):
         help_text = f"""
         🗿Ваш профиль:
         ┏Имя: {user_name}
-        ┠Вес: {FitnessCoefficient.weight}
-        ┠Рост: {FitnessCoefficient.height}
-        ┠Возраст: {FitnessCoefficient.age}
+        ┠Вес: {FitnessCoefficient.weight}{default['def_weight']}
+        ┠Рост: {FitnessCoefficient.height}{default['def_height']}
+        ┠Возраст: {FitnessCoefficient.age}{default['def_age']}
         ┗Уровень: {FitnessCoefficient.fitness_level}
                     """
         bot.send_message(callback.message.chat.id, text=help_text)
@@ -530,10 +535,11 @@ def callback(callback):
 # Первая тренировка
 @bot.message_handler(func=lambda message: waiting_for_input == 'weight')
 def number_handler(message):
-    global waiting_for_input
+    global waiting_for_input, default
     try:
         FitnessCoefficient.weight = (int(message.text))
         waiting_for_input = ""
+        default['def_weight'] = ""
         bot.send_message(message.chat.id, f"✅ Вес {FitnessCoefficient.weight} кг сохранён!")
     except ValueError:
         bot.send_message(message.chat.id, "❌ Введите корректное число!")
@@ -545,6 +551,7 @@ def number_handler(message):
     try:
         FitnessCoefficient.height = (int(message.text))
         waiting_for_input = ""
+        default['def_height'] = ""
         bot.send_message(message.chat.id, f"✅ Рост {FitnessCoefficient.height} см сохранён!")
     except ValueError:
         bot.send_message(message.chat.id, "❌ Введите корректное число!")
@@ -556,6 +563,7 @@ def number_handler(message):
     try:
         FitnessCoefficient.age = (int(message.text))
         waiting_for_input = ""
+        default['def_age'] = ""
         bot.send_message(message.chat.id, f"✅ Возраст {FitnessCoefficient.age} лет сохранён!")
     except ValueError:
         bot.send_message(message.chat.id, "❌ Введите корректное число!")
