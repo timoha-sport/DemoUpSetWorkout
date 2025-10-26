@@ -533,10 +533,13 @@ def callback(callback):
         button_bicycle = types.InlineKeyboardButton(text='Велосипед🚴', callback_data='bicycle')
         markup.add(button_bicycle)
         bot.send_message(callback.message.chat.id, text='Без инвентаря', reply_markup=markup, parse_mode='html')
+
     if callback.data == 'calories':
         markup = types.ReplyKeyboardMarkup()
         button_add_calories = types.InlineKeyboardButton(text='Добавить ккал🍔', callback_data='add_calories')
         button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
+        button_burn_zero = types.InlineKeyboardButton(text='Обнулить ккал🔄', callback_data='zero_calories')
+        markup.add(button_burn_zero)
         markup.add(button_add_calories, button_burn_calories)
         bot.send_message(callback.message.chat.id, text='Калории🍰', reply_markup=markup, parse_mode='html')
 
@@ -687,4 +690,7 @@ def processing(message):
     if message.text == 'Сжечь ккал🔥':
         waiting_for_input = 'burn_calories'
         bot.send_message(message.chat.id, text="🔥Введите количество сожженных ккал:")
+    if message.text == 'Обнулить ккал🔄':
+        Calories.daily_calories = 0
+        bot.send_message(message.chat.id, text="🔄Калории обнулены")
 bot.polling(none_stop=True)
