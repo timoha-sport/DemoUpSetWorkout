@@ -13,15 +13,18 @@ from Workouts import ExerciseCalculator
 
 bot = telebot.TeleBot("8438729431:AAEZdOQT7de43BWCmDYCVNoeckb4oiIWHTI")
 waiting_for_input = ""
+user_name = ""
 
 @bot.message_handler(commands=['start'])
 def start(message):
-  welcome = f"""{message.from_user.first_name}, Привет!
+    global user_name
+    user_name = message.from_user.first_name
+    welcome = f"""{user_name}, Привет!
   Меня зовут Арнольд🦍, я тебя приобщу к ЗОЖ (здоровому образу жизни).
   Вноси свои физические данные в разделе "Изменить профиль" и выбирай тренировку по душе!
   Открой /menu, что бы ознакомиться с функционалом.
     """
-  bot.send_message(message.chat.id, welcome)
+    bot.send_message(message.chat.id, welcome)
 
 
 @bot.message_handler(commands=['menu'])
@@ -40,7 +43,6 @@ def menu(message):
     button_exercises = types.InlineKeyboardButton(text='Сборник упражнений📕', callback_data='exercises')
     markup.add(button_exercises)
     bot.send_message(message.chat.id, text='――――🦾Все функции бота!🗂――――', reply_markup=markup, parse_mode='html')
-
 
 
 # Файл для хранения заметок
@@ -286,11 +288,12 @@ scheduler_thread.start()
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(callback):
-    global waiting_for_input
+    global waiting_for_input, user_name
     if callback.data == 'profile':
         help_text = f"""
         🗿Ваш профиль:
-        ┏Вес: {FitnessCoefficient.weight}
+        ┏Имя: {user_name}
+        ┠Вес: {FitnessCoefficient.weight}
         ┠Рост: {FitnessCoefficient.height}
         ┠Возраст: {FitnessCoefficient.age}
         ┗Уровень: {FitnessCoefficient.fitness_level}
@@ -305,7 +308,8 @@ def callback(callback):
         markup.add(button_height)
         button_age = types.InlineKeyboardButton(text='Ввести возраст🎂', callback_data='age')
         markup.add(button_age)
-        button_fitness_level = types.InlineKeyboardButton(text='Выбрать уровень подготовки📊', callback_data='fitness_level')
+        button_fitness_level = types.InlineKeyboardButton(text='Выбрать уровень подготовки📊',
+                                                          callback_data='fitness_level')
         markup.add(button_fitness_level)
         bot.send_message(callback.message.chat.id, text='Профиль', reply_markup=markup, parse_mode='html')
 
@@ -313,7 +317,8 @@ def callback(callback):
         markup = types.InlineKeyboardMarkup()
         button_strength = types.InlineKeyboardButton(text='Силовая (Базовая)🦍', callback_data='strength')
         markup.add(button_strength)
-        button_functional = types.InlineKeyboardButton(text='Функциональная (Взрывная сила)🐂', callback_data='functional')
+        button_functional = types.InlineKeyboardButton(text='Функциональная (Взрывная сила)🐂',
+                                                       callback_data='functional')
         markup.add(button_functional)
         button_wellness = types.InlineKeyboardButton(text='Оздоровительная (Для осанки)🦙', callback_data='wellness')
         markup.add(button_wellness)
@@ -321,15 +326,18 @@ def callback(callback):
         markup.add(button_endurance)
         button_for_press = types.InlineKeyboardButton(text='Для Пресса и Координации🦈', callback_data='for_press')
         markup.add(button_for_press)
-        button_lower_strength = types.InlineKeyboardButton(text='Нижняя Сила (Ноги и кор)🦩', callback_data='lower_strength')
+        button_lower_strength = types.InlineKeyboardButton(text='Нижняя Сила (Ноги и кор)🦩',
+                                                           callback_data='lower_strength')
         markup.add(button_lower_strength)
         button_combination = types.InlineKeyboardButton(text='Связка "Турник + Брусья"🐒', callback_data='combination')
         markup.add(button_combination)
         button_full_body = types.InlineKeyboardButton(text='Фулл-Бади (На все тело)🐊', callback_data='full_body')
         markup.add(button_full_body)
-        button_street_workout = types.InlineKeyboardButton(text='Уличный Воркаут (Статика и динамика)🐆', callback_data='street_workout')
+        button_street_workout = types.InlineKeyboardButton(text='Уличный Воркаут (Статика и динамика)🐆',
+                                                           callback_data='street_workout')
         markup.add(button_street_workout)
-        button_calorie_burning = types.InlineKeyboardButton(text='ВИИТ (Сжигание калорий)🐅', callback_data='calorie_burning')
+        button_calorie_burning = types.InlineKeyboardButton(text='ВИИТ (Сжигание калорий)🐅',
+                                                            callback_data='calorie_burning')
         markup.add(button_calorie_burning)
         bot.send_message(callback.message.chat.id, text='Готовые тренировки', reply_markup=markup, parse_mode='html')
     if callback.data == 'strength':
@@ -455,11 +463,11 @@ def callback(callback):
             """
         bot.send_message(callback.message.chat.id, text=help_text)
     if callback.data == 'reminder':
-         set_text = """
+        set_text = """
          Используй команду:
          /set - установить напоминание
                     """
-         bot.send_message(callback.message.chat.id, text=set_text)
+        bot.send_message(callback.message.chat.id, text=set_text)
 
     if callback.data == 'exercises':
         markup = types.ReplyKeyboardMarkup()
@@ -477,7 +485,8 @@ def callback(callback):
 
     bot.answer_callback_query(callback.id, text="")
 
-#Первая тренировка
+
+# Первая тренировка
 @bot.message_handler(func=lambda message: waiting_for_input == 'weight')
 def number_handler(message):
     global waiting_for_input
@@ -493,7 +502,7 @@ def number_handler(message):
 def number_handler(message):
     global waiting_for_input
     try:
-        FitnessCoefficient.height= (int(message.text))
+        FitnessCoefficient.height = (int(message.text))
         waiting_for_input = ""
         bot.send_message(message.chat.id, f"✅ Рост {FitnessCoefficient.height} см сохранён!")
     except ValueError:
@@ -509,6 +518,7 @@ def number_handler(message):
         bot.send_message(message.chat.id, f"✅ Возраст {FitnessCoefficient.age} лет сохранён!")
     except ValueError:
         bot.send_message(message.chat.id, "❌ Введите корректное число!")
+
 
 @bot.message_handler(content_types=['text'])
 def processing(message):
@@ -556,5 +566,6 @@ def processing(message):
     if message.text == 'Профессионал🥇':
         FitnessCoefficient.fitness_level = "advanced"
         bot.send_message(message.chat.id, text="✅ Профессиональный🥇 уровень подготовки сохранён!")
+
 
 bot.polling(none_stop=True)
