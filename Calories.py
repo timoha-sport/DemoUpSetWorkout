@@ -39,7 +39,7 @@ class Calories:
             Calories.last_reset_date = today
 
     @staticmethod
-    def calculate_daily_norm(weight, height, age, activity_level="medium"):
+    def calculate_daily_norm(weight, height, age, fitness_level):
         """
         Рассчитать дневную норму калорий
         activity_level: "low", "medium", "high"
@@ -58,12 +58,12 @@ class Calories:
 
         # Умножаем на коэффициент активности
         activity_multipliers = {
-            "low": 1.2,  # сидячий образ жизни
-            "medium": 1.55,  # умеренная активность
-            "high": 1.725  # высокая активность
+            "beginner": 1.2,  # сидячий образ жизни
+            "intermediate": 1.55,  # умеренная активность
+            "advanced": 1.725  # высокая активность
         }
 
-        multiplier = activity_multipliers.get(activity_level, 1.55)
+        multiplier = activity_multipliers[fitness_level]
         daily_norm = bmr * multiplier
 
         return int(daily_norm)

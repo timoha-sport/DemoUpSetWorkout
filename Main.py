@@ -10,6 +10,7 @@ from telebot import types
 
 from Profile import FitnessCoefficient
 from Workouts import ExerciseCalculator
+from Calories import Calories
 
 bot = telebot.TeleBot("8438729431:AAEZdOQT7de43BWCmDYCVNoeckb4oiIWHTI")
 waiting_for_input = ""
@@ -47,6 +48,8 @@ def menu(message):
     markup.add(button_reminder)
     button_exercises = types.InlineKeyboardButton(text='Сборник упражнений📕', callback_data='exercises')
     markup.add(button_exercises)
+    button_calories = types.InlineKeyboardButton(text='Калории🍰', callback_data='calories')
+    markup.add(button_calories)
     bot.send_message(message.chat.id, text='――――🦾Все функции бота!🗂――――', reply_markup=markup, parse_mode='html')
 
 
@@ -301,7 +304,9 @@ def callback(callback):
         ┠Вес: {FitnessCoefficient.weight}{default['def_weight']}
         ┠Рост: {FitnessCoefficient.height}{default['def_height']}
         ┠Возраст: {FitnessCoefficient.age}{default['def_age']}
-        ┗Уровень: {FitnessCoefficient.fitness_level}
+        ┠Уровень: {FitnessCoefficient.fitness_level}
+        ┗Дневная норма: {Calories.daily_calories}/{Calories.calculate_daily_norm(FitnessCoefficient.weight, 
+                FitnessCoefficient.height, FitnessCoefficient.age, FitnessCoefficient.fitness_level)} ккал
                     """
         bot.send_message(callback.message.chat.id, text=help_text)
 
@@ -528,11 +533,40 @@ def callback(callback):
         button_bicycle = types.InlineKeyboardButton(text='Велосипед🚴', callback_data='bicycle')
         markup.add(button_bicycle)
         bot.send_message(callback.message.chat.id, text='Без инвентаря', reply_markup=markup, parse_mode='html')
+    if callback.data == 'calories':
+        markup = types.ReplyKeyboardMarkup()
+        button_add_calories = types.InlineKeyboardButton(text='Добавить ккал🍔', callback_data='add_calories')
+        button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
+        markup.add(button_add_calories, button_burn_calories)
+        bot.send_message(callback.message.chat.id, text='Калории🍰', reply_markup=markup, parse_mode='html')
 
     bot.answer_callback_query(callback.id, text="")
 
+@bot.message_handler(func=lambda message: waiting_for_input == 'add_calories')
+def number_handler(message):
+    global waiting_for_input, default
+    try:
+        Calories.daily_calories += (int(message.text))
+        waiting_for_input = ""
+        bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!")
+    except ValueError:
+        bot.send_message(message.chat.id, "❌ Введите корректное число!")
 
-# Первая тренировка
+@bot.message_handler(func=lambda message: waiting_for_input == 'burn_calories')
+def number_handler(message):
+    global waiting_for_input, default
+    if 0 > Calories.daily_calories - (int(message.text)):
+        bot.send_message(message.chat.id, "❌ Количество калорий меньше чем вы можете сжечь!")
+    else:
+        try:
+            Calories.daily_calories -= (int(message.text))
+            waiting_for_input = ""
+            bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!")
+        except ValueError:
+            bot.send_message(message.chat.id, "❌ Введите корректное число!")
+
+
+
 @bot.message_handler(func=lambda message: waiting_for_input == 'weight')
 def number_handler(message):
     global waiting_for_input, default
@@ -647,5 +681,10 @@ def processing(message):
     if message.text == 'Велосипед🚴':
         video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1389749311-640_adpp_is.mp4", 'rb')
         bot.send_video(message.from_user.id, video, parse_mode='html')
-
+    if message.text == 'Добавить ккал🍔':
+        waiting_for_input = 'add_calories'
+        bot.send_message(message.chat.id, text="🍔Введите количество набранных ккал:")
+    if message.text == 'Сжечь ккал🔥':
+        waiting_for_input = 'burn_calories'
+        bot.send_message(message.chat.id, text="🔥Введите количество сожженных ккал:")
 bot.polling(none_stop=True)
