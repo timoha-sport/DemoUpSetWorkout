@@ -129,3 +129,80 @@ class ExerciseCalculator:
             "Скручивания": ExerciseCalculator.calculate_crunches(),
             "Велосипед (сек)": ExerciseCalculator.calculate_bicycle()
         }
+
+    @staticmethod
+    def get_workout(workout):
+        if workout == "Strength":
+            return {
+                "Подтягивания": ExerciseCalculator.calculate_pullups() * 4,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 4,
+                "Приседания": ExerciseCalculator.calculate_squats() * 4,
+                "Планка (сек)": ExerciseCalculator.calculate_plank() * 3
+            }
+        if workout == "Power":
+            return {
+                "Подтягивания": ExerciseCalculator.calculate_pullups() * 4,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 3,
+                "Берпи": ExerciseCalculator.calculate_burpees() * 3,
+                "Прыжки из приседа": ExerciseCalculator.calculate_jump_squats() * 3
+            }
+        if workout == "Posture":
+            return {
+                "Вис на турнике (сек)": ExerciseCalculator.calculate_hang_time() * 3,
+                "Подъем ног в висе": ExerciseCalculator.calculate_leg_raises() * 3,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 3,
+                "Планка (сек)": ExerciseCalculator.calculate_plank() * 3
+            }
+        if workout == "Endurance":
+            return {
+                "Подтягивания": ExerciseCalculator.calculate_pullups() * 5,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 5,
+                "Приседания": ExerciseCalculator.calculate_squats() * 5,
+                "Берпи": ExerciseCalculator.calculate_burpees() * 5
+            }
+        if workout == "Core":
+            return {
+                "Подъем ног в висе": ExerciseCalculator.calculate_leg_raises() * 4,
+                "Уголок на брусьях": ExerciseCalculator.calculate_l_sit() * 3,
+                "Скручивания": ExerciseCalculator.calculate_crunches() * 3,
+                "Велосипед": ExerciseCalculator.calculate_bicycle() * 3
+            }
+        if workout == "Lower":
+            return {
+                "Приседания на одной ноге": ExerciseCalculator.calculate_pistol_squats() * 4,
+                "Прыжки из приседа": ExerciseCalculator.calculate_jump_squats() * 3,
+                "Подъем ног в висе": ExerciseCalculator.calculate_leg_raises() * 3,
+                "Выпады": ExerciseCalculator.calculate_lunges() * 3
+            }
+        if workout == "Superset":
+            return {
+                "Подтягивания": ExerciseCalculator.calculate_pullups() * 4,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 4,
+                "Подъем ног в висе": ExerciseCalculator.calculate_leg_raises() * 3,
+                "Отжимания от пола": ExerciseCalculator.calculate_pushups() * 3
+            }
+        if workout == "Full-Body":
+            return {
+                "Подтягивания": ExerciseCalculator.calculate_pullups() * 3,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 3,
+                "Приседания": ExerciseCalculator.calculate_squats() * 3,
+                "Подъем ног в висе": ExerciseCalculator.calculate_leg_raises() * 3
+            }
+        if workout == "Street":
+            return {
+                "Подтягивания": ExerciseCalculator.calculate_pullups() * 3,
+                "Передний вис на брусьях":  ExerciseCalculator.calculate_front_support() * 3,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 3,
+                "Уголок на брусьях": ExerciseCalculator.calculate_l_sit() * 3
+            }
+        if workout == "HIIT":
+            return {
+                "Берпи": ExerciseCalculator.calculate_burpees() * 5,
+                "Подтягивания":  ExerciseCalculator.calculate_pullups() * 5,
+                "Отжимания на брусьях": ExerciseCalculator.calculate_dips() * 5,
+                "Прыжки из приседа": ExerciseCalculator.calculate_l_sit() * 5
+            }
+
+
+
+

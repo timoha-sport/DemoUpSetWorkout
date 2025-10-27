@@ -337,16 +337,13 @@ def callback(callback):
         button_calorie_burning = types.InlineKeyboardButton(text='ВИИТ (Сжигание калорий)🐅',
                                                             callback_data='calorie_burning')
         markup.add(button_calorie_burning)
-        bot.send_message(callback.message.chat.id, text='Готовые тренировки', reply_markup=markup, parse_mode='html')
+        bot.send_message(callback.message.chat.id, text='Готовые тренировки✅', reply_markup=markup, parse_mode='html')
     if callback.data == 'strength':
         strength_text = f"""
         Тренировка: Силовая (Базовая)🦍
 Цель: Развитие максимальной силы.🏆
 Отдых: 90-120 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Приседания", ExerciseCalculator.calculate_squats(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Планка (сек)", ExerciseCalculator.calculate_plank(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Strength"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips()}раз
 3.➣Приседания:  4 подхода по {ExerciseCalculator.calculate_squats()}раз
@@ -358,10 +355,7 @@ def callback(callback):
         Тренировка: Функциональная (Взрывная сила)🐂
 Цель: Развитие мощности.🏆
 Отдых: 60-75 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Берпи", ExerciseCalculator.calculate_burpees(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Прыжки из приседа", ExerciseCalculator.calculate_jump_squats(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Power"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания с усилием: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях взрывные: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
 3.➣Берпи: 3 подхода по {ExerciseCalculator.calculate_burpees()}раз
@@ -373,10 +367,7 @@ def callback(callback):
         Тренировка: Оздоровительная (Для осанки)🦙
 Цель: Укрепление спины и кора.🏆
 Отдых: 30-45 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Вис на турнике (сек)", ExerciseCalculator.calculate_hang_time(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Подъем ног в висе", ExerciseCalculator.calculate_leg_raises(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Планка (сек)", ExerciseCalculator.calculate_plank(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Posture"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time()}сек
 2.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
 3.➣Отжимания на брусьях (медленно): 3 подхода по {ExerciseCalculator.calculate_dips()}раз
@@ -388,10 +379,7 @@ def callback(callback):
          Тренировка: На Выносливость (Круговая)🐫      
 Цель: Развитие выносливости.🏆
 Инструкция: Все упражнения подряд, отдых 2 мин после круга. 3-5 кругов.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 5
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 5
-        + Calories.calculate_exercise_calories("Приседания", ExerciseCalculator.calculate_squats(), FitnessCoefficient.weight) * 5
-        + Calories.calculate_exercise_calories("Берпи", ExerciseCalculator.calculate_burpees(), FitnessCoefficient.weight) * 5, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Endurance"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания (макс. раз)
 2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()} раз)
 3.➣Приседания ({ExerciseCalculator.calculate_squats()} раз)
@@ -403,10 +391,7 @@ def callback(callback):
         Тренировка: Для Пресса и Координации🦈
 Цель: Проработка кора.🏆
 Отдых: 45-60 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подъем ног в висе", ExerciseCalculator.calculate_leg_raises(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Уголок на брусьях", ExerciseCalculator.calculate_l_sit(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Скручивания", ExerciseCalculator.calculate_crunches(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Велосипед", ExerciseCalculator.calculate_bicycle(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Core"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
 2.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
 3.➣Скручивания: 3 подхода по {ExerciseCalculator.calculate_crunches()}раз
@@ -418,10 +403,7 @@ def callback(callback):
         Тренировка: Нижняя Сила (Ноги и кор)🦩
 Цель: Развитие низа тела.🏆
 Отдых: 60 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Приседания на одной ноге", ExerciseCalculator.calculate_pistol_squats(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Прыжки из приседа", ExerciseCalculator.calculate_jump_squats(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Подъем ног в висе", ExerciseCalculator.calculate_leg_raises(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Выпады", ExerciseCalculator.calculate_lunges(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Lower"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats()}раз
 2.➣Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
 3.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
@@ -433,10 +415,7 @@ def callback(callback):
         Тренировка: Связка "Турник + Брусья"🐒
 Цель: Интенсивная проработка верха тела.🏆
 Инструкция: Упражнения парами (суперсеты). Отдых 90 сек после пары.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 4
-        + Calories.calculate_exercise_calories("Подъем ног в висе", ExerciseCalculator.calculate_leg_raises(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Отжимания от пола", ExerciseCalculator.calculate_pushups(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Superset"), FitnessCoefficient.weight)}ккал.🍰
 Суперсет 1 (4 подхода):
     1.➣Подтягивания ({ExerciseCalculator.calculate_pullups()})
     2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()})
@@ -450,10 +429,7 @@ def callback(callback):
         Тренировка: Фулл-Бади (На все тело)🐊
 Цель: Равномерная проработка.🏆
 Отдых: 60-75 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Приседания", ExerciseCalculator.calculate_squats(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Подъем ног в висе", ExerciseCalculator.calculate_leg_raises(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Full-Body"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
 3.➣Приседания: 3 подхода по {ExerciseCalculator.calculate_squats()}раз
@@ -465,10 +441,7 @@ def callback(callback):
         Тренировка: Уличный Воркаут (Статика и динамика)🐆
 Цель: Развитие силовой выносливости.🏆
 Отдых: 90 секунд.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Передний вис на брусьях", ExerciseCalculator.calculate_front_support(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 3
-        + Calories.calculate_exercise_calories("Уголок на брусьях", ExerciseCalculator.calculate_l_sit(), FitnessCoefficient.weight) * 3, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Street"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support()}раз
 3.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
@@ -480,10 +453,7 @@ def callback(callback):
         Тренировка: ВИИТ (Сжигание калорий)🐅
 Цель: Максимальная интенсивность.🏆
 Инструкция: 40 сек работа / 20 сек отдых. 3-5 кругов.⏱️
-Калории: {round(Calories.calculate_exercise_calories("Берпи", ExerciseCalculator.calculate_burpees(), FitnessCoefficient.weight) * 5
-        + Calories.calculate_exercise_calories("Подтягивания", ExerciseCalculator.calculate_pullups(), FitnessCoefficient.weight) * 5
-        + Calories.calculate_exercise_calories("Отжимания на брусьях", ExerciseCalculator.calculate_dips(), FitnessCoefficient.weight) * 5
-        + Calories.calculate_exercise_calories("Прыжки из приседа", ExerciseCalculator.calculate_l_sit(), FitnessCoefficient.weight) * 5, 1)}ккал.🍰
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("HIIT"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Берпи
 2.➣Подтягивания (или вис с подъемом колен)
 3.➣Отжимания на брусьях
