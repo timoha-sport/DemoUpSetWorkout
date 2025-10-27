@@ -114,28 +114,18 @@ class Calories:
         Calories.daily_calories += calories
 
     @staticmethod
-    def get_remaining_calories(weight, height, age, activity_level="medium"):
-        """Получить оставшиеся калории на сегодня"""
-        Calories._reset_if_new_day()
+    def calculate_calories(calories_per_100g, weight_in_grams):
+        """
+        Расчет калорийности продукта
 
-        daily_norm = Calories.calculate_daily_norm(weight, height, age, activity_level)
-        remaining = daily_norm - Calories.daily_calories
+        Args:
+            calories_per_100g (float): калорийность на 100 грамм
+            weight_in_grams (float): вес продукта в граммах
 
-        return {
-            "daily_norm": daily_norm,
-            "consumed": round(Calories.daily_calories, 1),
-            "remaining": round(remaining, 1),
-            "is_deficit": remaining > 0
-        }
-
-    @staticmethod
-    def get_daily_stats():
-        """Получить текущую статистику за день"""
-        Calories._reset_if_new_day()
-        return {
-            "date": Calories.last_reset_date,
-            "total_calories": round(Calories.daily_calories, 1)
-        }
+        Returns:
+            float: калорийность для указанного веса
+        """
+        return (calories_per_100g * weight_in_grams) / 100
 
     @staticmethod
     def reset_manual():

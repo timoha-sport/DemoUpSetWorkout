@@ -43,7 +43,7 @@ def menu(message):
     markup.add(button_reminder)
     button_exercises = types.InlineKeyboardButton(text='Сборник упражнений📕', callback_data='exercises')
     markup.add(button_exercises)
-    button_calories = types.InlineKeyboardButton(text='Калории🍰', callback_data='calories')
+    button_calories = types.InlineKeyboardButton(text='Добавить калории🍰', callback_data='calories')
     markup.add(button_calories)
     bot.send_message(message.chat.id, text='――――🦾Все функции бота!🗂――――', reply_markup=markup, parse_mode='html')
 
@@ -564,11 +564,11 @@ def callback(callback):
 
     if callback.data == 'calories':
         markup = types.ReplyKeyboardMarkup()
-        button_add_calories = types.InlineKeyboardButton(text='Добавить ккал🍔', callback_data='add_calories')
-        button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
         button_burn_zero = types.InlineKeyboardButton(text='Обнулить ккал🔄', callback_data='zero_calories')
         markup.add(button_burn_zero)
+        button_add_calories = types.InlineKeyboardButton(text='Добавить ккал🍔', callback_data='add_calories')
         markup.add(button_add_calories)
+        button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
         markup.add(button_burn_calories)
         bot.send_message(callback.message.chat.id, text='Калории🍰', reply_markup=markup, parse_mode='html')
 
@@ -576,16 +576,25 @@ def callback(callback):
 
 @bot.message_handler(func=lambda m: m.text == 'Добавить ккал🍔')
 def number_handler(message):
-    msg = bot.send_message(message.chat.id, "🍔Введите количество набранных ккал:")
-    bot.register_next_step_handler(msg, number_handler_add)
+    text = f"""🍔Введите калорийность продукта на 100г и через пробел массу продукта.
+Пример: 150 52"""
+    msg = bot.send_message(message.chat.id, text)
+    bot.register_next_step_handler(msg, number_handler_add_calories)
 
-def number_handler_add(message):
-    global default
+def number_handler_add_calories(message):
     try:
-        Calories.daily_calories += (int(message.text))
-        bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!")
+        parts = message.text.split(' ', 1)
+        calories_per_100g = int(parts[0])
+        weight_in_grams = int(parts[1])
+        Calories.daily_calories += Calories.calculate_calories(calories_per_100g, weight_in_grams)
+        bot.send_message(message.chat.id, f"""✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!\n
+Было добавлено: {Calories.calculate_calories(calories_per_100g, weight_in_grams)} ккал""")
     except ValueError:
-        bot.send_message(message.chat.id, "❌ Введите корректное число!")
+        msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных!\nИспользуйте цифры!")
+        bot.register_next_step_handler(msg, number_handler_config)
+    except Exception:
+        msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nВведите калорийность продукта(грамм) и массу продукта(грамм) через пробел!")
+        bot.register_next_step_handler(msg, number_handler_config)
 
 @bot.message_handler(func=lambda m: m.text == 'Сжечь ккал🔥')
 def number_handler(message):
@@ -595,7 +604,7 @@ def number_handler(message):
 def number_handler_clear(message):
     global default
     if 0 > Calories.daily_calories - (int(message.text)):
-        bot.send_message(message.chat.id, "❌ Количество калорий меньше чем вы можете сжечь!")
+        bot.send_message(message.chat.id, "❌ Количество калорий больше чем вы можете сжечь!")
     else:
         try:
             Calories.daily_calories -= (int(message.text))
@@ -611,17 +620,17 @@ def number_handler(message):
 @bot.message_handler(func=lambda m: m.text == 'Начинающий🥉')
 def number_handler(message):
     FitnessCoefficient.fitness_level = "beginner"
-    bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!")
+    bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!\n Можете вернуться в /menu")
 
 @bot.message_handler(func=lambda m: m.text == 'Продвинутый🥈')
 def number_handler(message):
     FitnessCoefficient.fitness_level = "intermediate"
-    bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!")
+    bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!\n Можете вернуться в /menu")
 
 @bot.message_handler(func=lambda m: m.text == 'Профессионал🥇')
 def number_handler(message):
     FitnessCoefficient.fitness_level = "advanced"
-    bot.send_message(message.chat.id, text="✅ Профессионал🥇 уровень подготовки сохранён!")
+    bot.send_message(message.chat.id, text="✅ Профессионал🥇 уровень подготовки сохранён!\n Можете вернуться в /menu")
 
 
 
@@ -641,10 +650,10 @@ def number_handler_config(message):
         bot.send_message(message.chat.id, f"""✅ Параметры {FitnessCoefficient.weight}кг, {FitnessCoefficient.height}см, {FitnessCoefficient.age}лет сохранены!""")
         number_handler_fit_level(message)
     except ValueError:
-        msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных! Используйте цифры.\n")
+        msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных!\nИспользуйте цифры!")
         bot.register_next_step_handler(msg, number_handler_config)
     except Exception:
-        msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nИспользуйте: '70 180 25'")
+        msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nВведите вес(кг), рост(см), возраст(лет) через пробел!")
         bot.register_next_step_handler(msg, number_handler_config)
 
 def number_handler_fit_level(message):
