@@ -13,13 +13,8 @@ from Workouts import ExerciseCalculator
 from Calories import Calories
 
 bot = telebot.TeleBot("8438729431:AAEZdOQT7de43BWCmDYCVNoeckb4oiIWHTI")
-waiting_for_input = ""
 user_name = ""
-default = {
-    "def_weight": " (по умолчанию)",
-    "def_height": " (по умолчанию)",
-    "def_age": " (по умолчанию)"
-}
+default = "(по умолчанию)"
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -296,14 +291,14 @@ scheduler_thread.start()
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(callback):
-    global waiting_for_input, user_name
+    global user_name
     if callback.data == 'profile':
         help_text = f"""
         🗿Ваш профиль:
         ┏Имя: {user_name}
-        ┠Вес: {FitnessCoefficient.weight}{default['def_weight']}
-        ┠Рост: {FitnessCoefficient.height}{default['def_height']}
-        ┠Возраст: {FitnessCoefficient.age}{default['def_age']}
+        ┠Вес: {FitnessCoefficient.weight}{default}
+        ┠Рост: {FitnessCoefficient.height}{default}
+        ┠Возраст: {FitnessCoefficient.age}{default}
         ┠Уровень: {FitnessCoefficient.fitness_level}
         ┗Дневная норма: {Calories.daily_calories}/{Calories.calculate_daily_norm(FitnessCoefficient.weight, 
                 FitnessCoefficient.height, FitnessCoefficient.age, FitnessCoefficient.fitness_level)} ккал
@@ -312,16 +307,9 @@ def callback(callback):
 
     if callback.data == 'edit_profile':
         markup = types.ReplyKeyboardMarkup()
-        button_weight = types.InlineKeyboardButton(text='Ввести вес⚖️', callback_data='weight')
-        markup.add(button_weight)
-        button_height = types.InlineKeyboardButton(text='Ввести рост🦒', callback_data='height')
-        markup.add(button_height)
-        button_age = types.InlineKeyboardButton(text='Ввести возраст🎂', callback_data='age')
-        markup.add(button_age)
-        button_fitness_level = types.InlineKeyboardButton(text='Выбрать уровень подготовки📊',
-                                                          callback_data='fitness_level')
-        markup.add(button_fitness_level)
-        bot.send_message(callback.message.chat.id, text='Профиль', reply_markup=markup, parse_mode='html')
+        button_config = types.InlineKeyboardButton(text='Ввести параметры⚙️', callback_data='config')
+        markup.add(button_config)
+        bot.send_message(callback.message.chat.id, text='Ввести параметры⚙️', reply_markup=markup, parse_mode='html')
 
     if callback.data == 'workout':
         markup = types.InlineKeyboardMarkup()
@@ -580,102 +568,94 @@ def callback(callback):
         button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
         button_burn_zero = types.InlineKeyboardButton(text='Обнулить ккал🔄', callback_data='zero_calories')
         markup.add(button_burn_zero)
-        markup.add(button_add_calories, button_burn_calories)
+        markup.add(button_add_calories)
+        markup.add(button_burn_calories)
         bot.send_message(callback.message.chat.id, text='Калории🍰', reply_markup=markup, parse_mode='html')
 
     bot.answer_callback_query(callback.id, text="")
 
-@bot.message_handler(func=lambda message: waiting_for_input == 'add_calories')
+@bot.message_handler(func=lambda m: m.text == 'Добавить ккал🍔')
 def number_handler(message):
-    global waiting_for_input, default
+    msg = bot.send_message(message.chat.id, "🍔Введите количество набранных ккал:")
+    bot.register_next_step_handler(msg, number_handler_add)
+
+def number_handler_add(message):
+    global default
     try:
         Calories.daily_calories += (int(message.text))
-        waiting_for_input = ""
         bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!")
     except ValueError:
         bot.send_message(message.chat.id, "❌ Введите корректное число!")
 
-@bot.message_handler(func=lambda message: waiting_for_input == 'burn_calories')
+@bot.message_handler(func=lambda m: m.text == 'Сжечь ккал🔥')
 def number_handler(message):
-    global waiting_for_input, default
+    msg = bot.send_message(message.chat.id, "🔥Введите количество сожженных ккал:")
+    bot.register_next_step_handler(msg, number_handler_clear)
+
+def number_handler_clear(message):
+    global default
     if 0 > Calories.daily_calories - (int(message.text)):
         bot.send_message(message.chat.id, "❌ Количество калорий меньше чем вы можете сжечь!")
     else:
         try:
             Calories.daily_calories -= (int(message.text))
-            waiting_for_input = ""
             bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!")
         except ValueError:
             bot.send_message(message.chat.id, "❌ Введите корректное число!")
 
-
-
-@bot.message_handler(func=lambda message: waiting_for_input == 'weight')
+@bot.message_handler(func=lambda m: m.text == 'Обнулить ккал🔄')
 def number_handler(message):
-    global waiting_for_input, default
-    try:
-        FitnessCoefficient.weight = (int(message.text))
-        waiting_for_input = ""
-        default['def_weight'] = ""
-        bot.send_message(message.chat.id, f"✅ Вес {FitnessCoefficient.weight} кг сохранён!")
-    except ValueError:
-        bot.send_message(message.chat.id, "❌ Введите корректное число!")
+    Calories.daily_calories = 0
+    bot.send_message(message.chat.id, text="🔄Калории обнулены")
 
-
-@bot.message_handler(func=lambda message: waiting_for_input == 'height')
+@bot.message_handler(func=lambda m: m.text == 'Начинающий🥉')
 def number_handler(message):
-    global waiting_for_input
-    try:
-        FitnessCoefficient.height = (int(message.text))
-        waiting_for_input = ""
-        default['def_height'] = ""
-        bot.send_message(message.chat.id, f"✅ Рост {FitnessCoefficient.height} см сохранён!")
-    except ValueError:
-        bot.send_message(message.chat.id, "❌ Введите корректное число!")
+    FitnessCoefficient.fitness_level = "beginner"
+    bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!")
 
-
-@bot.message_handler(func=lambda message: waiting_for_input == 'age')
+@bot.message_handler(func=lambda m: m.text == 'Продвинутый🥈')
 def number_handler(message):
-    global waiting_for_input
+    FitnessCoefficient.fitness_level = "intermediate"
+    bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!")
+
+@bot.message_handler(func=lambda m: m.text == 'Профессионал🥇')
+def number_handler(message):
+    FitnessCoefficient.fitness_level = "advanced"
+    bot.send_message(message.chat.id, text="✅ Профессионал🥇 уровень подготовки сохранён!")
+
+
+
+@bot.message_handler(func=lambda m: m.text == "Ввести параметры⚙️")
+def number_handler(message):
+    msg = bot.send_message(message.chat.id, "Введите вес(кг), рост(см) и возраст(лет) в таком формате:'70 180 25'")
+    bot.register_next_step_handler(msg, number_handler_config)
+
+def number_handler_config(message):
+    global default
     try:
-        FitnessCoefficient.age = (int(message.text))
-        waiting_for_input = ""
-        default['def_age'] = ""
-        bot.send_message(message.chat.id, f"✅ Возраст {FitnessCoefficient.age} лет сохранён!")
+        parts = message.text.split(' ', 2)
+        FitnessCoefficient.weight = int(parts[0])
+        FitnessCoefficient.height = int(parts[1])
+        FitnessCoefficient.age = int(parts[2])
+        default = ""
+        bot.send_message(message.chat.id, f"""✅ Параметры {FitnessCoefficient.weight}кг, {FitnessCoefficient.height}см, {FitnessCoefficient.age}лет сохранены!""")
+        number_handler_fit_level(message)
     except ValueError:
-        bot.send_message(message.chat.id, "❌ Введите корректное число!")
+        msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных! Используйте цифры.\n")
+        bot.register_next_step_handler(msg, number_handler_config)
+    except Exception:
+        msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nИспользуйте: '70 180 25'")
+        bot.register_next_step_handler(msg, number_handler_config)
+
+def number_handler_fit_level(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add('Профессионал🥇')
+    markup.add('Начинающий🥉', 'Продвинутый🥈')
+    bot.send_message(message.chat.id, "Выбери свой уровень подготовки!💪", reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
 def processing(message):
-    global waiting_for_input
-    if message.text == 'Ввести вес⚖️':
-        waiting_for_input = 'weight'
-        bot.send_message(message.chat.id, text="Введите свой вес(кг):")
-    if message.text == 'Ввести рост🦒':
-        waiting_for_input = 'height'
-        bot.send_message(message.chat.id, text="Введите свой рост(см):")
-    if message.text == 'Ввести возраст🎂':
-        waiting_for_input = 'age'
-        bot.send_message(message.chat.id, text="Введите свой возраст:")
-    if message.text == 'Выбрать уровень подготовки📊':
-        markup = types.ReplyKeyboardMarkup()
-        button_beginner = types.InlineKeyboardButton(text='Начинающий🥉', callback_data='beginner')
-        markup.add(button_beginner)
-        button_intermediate = types.InlineKeyboardButton(text='Продвинутый🥈', callback_data='intermediate')
-        markup.add(button_intermediate)
-        button_advanced = types.InlineKeyboardButton(text='Профессионал🥇', callback_data='advanced')
-        markup.add(button_advanced)
-        bot.send_message(message.chat.id, text='Уровень подготовки', reply_markup=markup, parse_mode='html')
-    if message.text == 'Начинающий🥉':
-        FitnessCoefficient.fitness_level = "beginner"
-        bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!")
-    if message.text == 'Продвинутый🥈':
-        FitnessCoefficient.fitness_level = "intermediate"
-        bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!")
-    if message.text == 'Профессионал🥇':
-        FitnessCoefficient.fitness_level = "advanced"
-        bot.send_message(message.chat.id, text="✅ Профессиональный🥇 уровень подготовки сохранён!")
     # Турник
     if message.text == 'Подтягивания💪':
         video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1354428390-640_adpp_is.mp4", 'rb')
@@ -724,13 +704,4 @@ def processing(message):
     if message.text == 'Велосипед🚴':
         video = open(r"D:\Рабочий стол\Упражнения\istockphoto-1389749311-640_adpp_is.mp4", 'rb')
         bot.send_video(message.from_user.id, video, parse_mode='html')
-    if message.text == 'Добавить ккал🍔':
-        waiting_for_input = 'add_calories'
-        bot.send_message(message.chat.id, text="🍔Введите количество набранных ккал:")
-    if message.text == 'Сжечь ккал🔥':
-        waiting_for_input = 'burn_calories'
-        bot.send_message(message.chat.id, text="🔥Введите количество сожженных ккал:")
-    if message.text == 'Обнулить ккал🔄':
-        Calories.daily_calories = 0
-        bot.send_message(message.chat.id, text="🔄Калории обнулены")
 bot.polling(none_stop=True)
