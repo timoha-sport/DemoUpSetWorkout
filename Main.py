@@ -8,6 +8,7 @@ from datetime import datetime
 import telebot
 from telebot import types
 
+from HeartRate import HeartRateCalculator
 from Profile import FitnessCoefficient
 from Workouts import ExerciseCalculator
 from Calories import Calories
@@ -343,6 +344,7 @@ def callback(callback):
         Тренировка: Силовая (Базовая)🦍
 Цель: Развитие максимальной силы.🏆
 Отдых: 90-120 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Strength"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Strength"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips()}раз
@@ -355,6 +357,7 @@ def callback(callback):
         Тренировка: Функциональная (Взрывная сила)🐂
 Цель: Развитие мощности.🏆
 Отдых: 60-75 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Power"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Power"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания с усилием: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях взрывные: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
@@ -367,6 +370,7 @@ def callback(callback):
         Тренировка: Оздоровительная (Для осанки)🦙
 Цель: Укрепление спины и кора.🏆
 Отдых: 30-45 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Posture"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Posture"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time()}сек
 2.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
@@ -379,6 +383,7 @@ def callback(callback):
          Тренировка: На Выносливость (Круговая)🐫      
 Цель: Развитие выносливости.🏆
 Инструкция: Все упражнения подряд, отдых 2 мин после круга. 3-5 кругов.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Endurance"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Endurance"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания (макс. раз)
 2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()} раз)
@@ -391,6 +396,7 @@ def callback(callback):
         Тренировка: Для Пресса и Координации🦈
 Цель: Проработка кора.🏆
 Отдых: 45-60 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Core"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Core"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
 2.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
@@ -403,6 +409,7 @@ def callback(callback):
         Тренировка: Нижняя Сила (Ноги и кор)🦩
 Цель: Развитие низа тела.🏆
 Отдых: 60 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Lower"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Lower"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats()}раз
 2.➣Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
@@ -415,6 +422,7 @@ def callback(callback):
         Тренировка: Связка "Турник + Брусья"🐒
 Цель: Интенсивная проработка верха тела.🏆
 Инструкция: Упражнения парами (суперсеты). Отдых 90 сек после пары.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Superset"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Superset"), FitnessCoefficient.weight)}ккал.🍰
 Суперсет 1 (4 подхода):
     1.➣Подтягивания ({ExerciseCalculator.calculate_pullups()})
@@ -429,6 +437,7 @@ def callback(callback):
         Тренировка: Фулл-Бади (На все тело)🐊
 Цель: Равномерная проработка.🏆
 Отдых: 60-75 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Full-Body"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Full-Body"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
@@ -441,6 +450,7 @@ def callback(callback):
         Тренировка: Уличный Воркаут (Статика и динамика)🐆
 Цель: Развитие силовой выносливости.🏆
 Отдых: 90 секунд.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Street"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Street"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
 2.➣Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support()}раз
@@ -453,6 +463,7 @@ def callback(callback):
         Тренировка: ВИИТ (Сжигание калорий)🐅
 Цель: Максимальная интенсивность.🏆
 Инструкция: 40 сек работа / 20 сек отдых. 3-5 кругов.⏱️
+Пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["HIIT"]}уд/мин❤️
 Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("HIIT"), FitnessCoefficient.weight)}ккал.🍰
 1.➣Берпи
 2.➣Подтягивания (или вис с подъемом колен)
