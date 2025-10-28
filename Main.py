@@ -85,7 +85,7 @@ def renumber_notes(user_notes):
 @bot.message_handler(commands=['add'])
 def add_note(message):
     chat_id = message.chat.id
-    msg = bot.send_message(chat_id, "📝 Напиши название упражнения и количество упражнений в каждом из подходов:")
+    msg = bot.send_message(chat_id, "📝 Напиши текст заметки:")
     bot.register_next_step_handler(msg, process_note)
 
 
@@ -103,7 +103,7 @@ def process_note(message):
     notes[str(chat_id)][note_id] = note_text
 
     save_notes(notes)
-    bot.send_message(chat_id, f"✅ Упражнение #{note_id} сохранено!")
+    bot.send_message(chat_id, f"✅ Заметка #{note_id} сохранена!")
 
 
 # Команда /list - показать все заметки
@@ -115,10 +115,10 @@ def list_notes(message):
     user_notes = notes.get(str(chat_id), {})
 
     if not user_notes:
-        bot.send_message(chat_id, "📭 У тебя пока нет упражнений")
+        bot.send_message(chat_id, "📭 У тебя пока нет заметок")
         return
 
-    response = "📋 Твои упражнения:\n\n"
+    response = "📋 Твои заметки:\n\n"
     for note_id, note_text in user_notes.items():
         response += f"#{note_id}: {note_text}\n\n"
 
@@ -134,11 +134,11 @@ def delete_note(message):
     user_notes = notes.get(str(chat_id), {})
 
     if not user_notes:
-        bot.send_message(chat_id, "📭 Нечего удалять - упражнений нет")
+        bot.send_message(chat_id, "📭 Нечего удалять - заметок нет")
         return
 
     # Показываем список заметок для удаления
-    response = "❌ Какое упражнение удалить? Напиши номер:\n\n"
+    response = "❌ Какое заметку удалить? Напиши номер:\n\n"
     for note_id, note_text in user_notes.items():
         response += f"#{note_id}: {note_text}\n"
 
@@ -162,12 +162,12 @@ def process_delete_note(message):
             notes[str(chat_id)] = renumber_notes(notes[str(chat_id)])
 
             save_notes(notes)
-            bot.send_message(chat_id, f"✅ Упражнение #{note_id} удалено!")
+            bot.send_message(chat_id, f"✅ Заметка #{note_id} удалена")
         else:
-            bot.send_message(chat_id, f"⚠️ ЗУпражнение #{note_id} не найдено")
+            bot.send_message(chat_id, f"⚠️ Заметка #{note_id} не найдена!")
 
     except ValueError:
-        bot.send_message(chat_id, "❌ Напиши номер Упражнения цифрой")
+        bot.send_message(chat_id, "❌ Напиши номер заметки цифрой")
 
 
 # Команда /clear - очистить все заметки
@@ -179,9 +179,9 @@ def clear_notes(message):
     if str(chat_id) in notes and notes[str(chat_id)]:
         notes[str(chat_id)] = {}
         save_notes(notes)
-        bot.send_message(chat_id, "🗑️ Все упражнения удалены!")
+        bot.send_message(chat_id, "🗑️ Все заметки удалены!")
     else:
-        bot.send_message(chat_id, "📭 Нечего удалять - упражнений нет")
+        bot.send_message(chat_id, "📭 Нечего удалять - заметок нет")
 
 
 # Простое хранилище в памяти
@@ -192,7 +192,7 @@ user_reminders = {}
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add('➕ Добавить', '📋 Список', '❌ Удалить')
-    bot.send_message(message.chat.id, "Привет! Я напомню нужные тебе события!", reply_markup=markup)
+    bot.send_message(message.chat.id, "Я напомню нужные тебе события!", reply_markup=markup)
 
 
 @bot.message_handler(func=lambda m: m.text == '➕ Добавить')
