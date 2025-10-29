@@ -23,7 +23,7 @@ def start(message):
     user_name = message.from_user.first_name
     welcome = f"""{user_name}, Привет!
   Меня зовут Арнольд🦍, я тебя приобщу к ЗОЖ (здоровому образу жизни).
-  Вноси свои физические данные в разделе "Изменить профиль" и выбирай тренировку по душе!
+  Вноси свои физические данные в разделе "Изменить профиль⚙️" и выбирай тренировку по душе!
   Открой /menu, что бы ознакомиться с функционалом.
     """
     bot.send_message(message.chat.id, welcome)
@@ -46,6 +46,8 @@ def menu(message):
     markup.add(button_exercises)
     button_calories = types.InlineKeyboardButton(text='Добавить калории🍰', callback_data='calories')
     markup.add(button_calories)
+    button_recipes = types.InlineKeyboardButton(text='Рецепты🍽️', callback_data='recipes')
+    markup.add(button_recipes)
     bot.send_message(message.chat.id, text='――――🦾Все функции бота!🗂――――', reply_markup=markup, parse_mode='html')
 
 
@@ -552,6 +554,11 @@ def callback(callback):
         button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
         markup.add(button_burn_calories)
         bot.send_message(callback.message.chat.id, text='Калории🍰', reply_markup=markup, parse_mode='html')
+
+    if callback.data == 'recipes':
+        text = '🍽️Рецепты, от которых ты не поправишься:\n http://propernutritionarnold.tilda.ws/'
+        bot.send_message(callback.message.chat.id, text, disable_web_page_preview=True)
+
 
     bot.answer_callback_query(callback.id, text="")
 
