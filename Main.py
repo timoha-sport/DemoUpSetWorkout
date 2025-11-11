@@ -38,7 +38,7 @@ def menu(message):
     markup.add(button_edit_profile)
     button_workout = types.InlineKeyboardButton(text='Готовые тренировки✅', callback_data='workout')
     markup.add(button_workout)
-    button_notes = types.InlineKeyboardButton(text='Личная тренировка📃', callback_data='notes')
+    button_notes = types.InlineKeyboardButton(text='Заметки📃', callback_data='notes')
     markup.add(button_notes)
     button_reminder = types.InlineKeyboardButton(text='Установить напоминание📆', callback_data='reminder')
     markup.add(button_reminder)
