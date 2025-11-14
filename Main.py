@@ -83,8 +83,16 @@ def renumber_notes(user_notes):
     return {i + 1: note_text for i, (old_id, note_text) in enumerate(sorted_notes)}
 
 
+@bot.message_handler(commands=['notes'])
+def start(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add('➕Добавить📌', '❌Удалить📌')
+    markup.add('🗑️Очистить📌', '📋Список📌')
+    bot.send_message(message.chat.id, "Я напомню нужные тебе события!", reply_markup=markup)
+
+
 # Команда /add - добавить заметку
-@bot.message_handler(commands=['add'])
+@bot.message_handler(func=lambda m: m.text == '➕Добавить📌')
 def add_note(message):
     chat_id = message.chat.id
     msg = bot.send_message(chat_id, "📝 Напиши текст заметки:")
@@ -109,7 +117,7 @@ def process_note(message):
 
 
 # Команда /list - показать все заметки
-@bot.message_handler(commands=['list'])
+@bot.message_handler(func=lambda m: m.text == '📋Список📌')
 def list_notes(message):
     chat_id = message.chat.id
     notes = load_notes()
@@ -128,7 +136,7 @@ def list_notes(message):
 
 
 # Команда /delete - удалить заметку
-@bot.message_handler(commands=['delete'])
+@bot.message_handler(func=lambda m: m.text == '❌Удалить📌')
 def delete_note(message):
     chat_id = message.chat.id
     notes = load_notes()
@@ -173,7 +181,7 @@ def process_delete_note(message):
 
 
 # Команда /clear - очистить все заметки
-@bot.message_handler(commands=['clear'])
+@bot.message_handler(func=lambda m: m.text == '🗑️Очистить📌')
 def clear_notes(message):
     chat_id = message.chat.id
     notes = load_notes()
@@ -190,14 +198,15 @@ def clear_notes(message):
 user_reminders = {}
 
 
-@bot.message_handler(commands=['set'])
+@bot.message_handler(commands=['reminders'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add('➕ Добавить', '📋 Список', '❌ Удалить')
+    markup.add('➕Добавить⏰', '❌Удалить⏰')
+    markup.add('📋Список⏰')
     bot.send_message(message.chat.id, "Я напомню нужные тебе события!", reply_markup=markup)
 
 
-@bot.message_handler(func=lambda m: m.text == '➕ Добавить')
+@bot.message_handler(func=lambda m: m.text == '➕Добавить⏰')
 def add_reminder(message):
     msg = bot.send_message(message.chat.id, "Введите день и время в формате:\n'понедельник 14:30 Напоминание'")
     bot.register_next_step_handler(msg, process_reminder)
@@ -235,7 +244,7 @@ def process_reminder(message):
         bot.send_message(message.chat.id, "Ошибка формата! Используйте: 'понедельник 14:30 Текст'")
 
 
-@bot.message_handler(func=lambda m: m.text == '📋 Список')
+@bot.message_handler(func=lambda m: m.text == '📋Список⏰')
 def list_reminders(message):
     if message.chat.id not in user_reminders or not user_reminders[message.chat.id]:
         bot.send_message(message.chat.id, "Нет напоминаний")
@@ -248,7 +257,7 @@ def list_reminders(message):
     bot.send_message(message.chat.id, text)
 
 
-@bot.message_handler(func=lambda m: m.text == '❌ Удалить')
+@bot.message_handler(func=lambda m: m.text == '❌Удалить⏰')
 def delete_reminder(message):
     if message.chat.id not in user_reminders or not user_reminders[message.chat.id]:
         bot.send_message(message.chat.id, "Нет напоминаний для удаления")
@@ -309,7 +318,7 @@ def callback(callback):
         bot.send_message(callback.message.chat.id, text=help_text)
 
     if callback.data == 'edit_profile':
-        markup = types.ReplyKeyboardMarkup()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button_config = types.InlineKeyboardButton(text='Ввести параметры⚙️', callback_data='config')
         markup.add(button_config)
         bot.send_message(callback.message.chat.id, text='Ввести параметры⚙️', reply_markup=markup, parse_mode='html')
@@ -476,17 +485,14 @@ def callback(callback):
 
     if callback.data == 'notes':
         help_text = """
-        Используй команды:
-        /add - добавить упражнение
-        /list - посмотреть упражнения
-        /delete - удалить упражнение
-        /clear - очистить все
+        Используй команду:
+        /notes - заметки 
             """
         bot.send_message(callback.message.chat.id, text=help_text)
     if callback.data == 'reminder':
         set_text = """
          Используй команду:
-         /set - установить напоминание
+         /reminders - напоминания
                     """
         bot.send_message(callback.message.chat.id, text=set_text)
 
@@ -501,7 +507,7 @@ def callback(callback):
         bot.send_message(callback.message.chat.id, text='Сборник упражнений📕', reply_markup=markup, parse_mode='html')
 
     if callback.data == 'horizontal':
-        markup = types.ReplyKeyboardMarkup()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         # Турник
         button_pull_ups = types.InlineKeyboardButton(text='Подтягивания💪', callback_data='pull_ups')
         markup.add(button_pull_ups)
@@ -512,7 +518,7 @@ def callback(callback):
         bot.send_message(callback.message.chat.id, text='На турнике', reply_markup=markup, parse_mode='html')
 
     if callback.data == 'bars':
-        markup = types.ReplyKeyboardMarkup()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         # Брусья
         button_dips = types.InlineKeyboardButton(text='Отжимания на брусьях📊', callback_data='dips')
         markup.add(button_dips)
@@ -523,7 +529,7 @@ def callback(callback):
         bot.send_message(callback.message.chat.id, text='На брусьях', reply_markup=markup, parse_mode='html')
 
     if callback.data == 'inventory':
-        markup = types.ReplyKeyboardMarkup()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         # Без инвентаря
         button_squats = types.InlineKeyboardButton(text='Приседания🏃', callback_data='squats')
         markup.add(button_squats)
@@ -546,13 +552,12 @@ def callback(callback):
         bot.send_message(callback.message.chat.id, text='Без инвентаря', reply_markup=markup, parse_mode='html')
 
     if callback.data == 'calories':
-        markup = types.ReplyKeyboardMarkup()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button_burn_zero = types.InlineKeyboardButton(text='Обнулить ккал🔄', callback_data='zero_calories')
-        markup.add(button_burn_zero)
         button_add_calories = types.InlineKeyboardButton(text='Добавить ккал🍔', callback_data='add_calories')
-        markup.add(button_add_calories)
         button_burn_calories = types.InlineKeyboardButton(text='Сжечь ккал🔥', callback_data='burn_calories')
-        markup.add(button_burn_calories)
+        markup.add(button_add_calories, button_burn_calories)
+        markup.add(button_burn_zero)
         bot.send_message(callback.message.chat.id, text='Калории🍰', reply_markup=markup, parse_mode='html')
 
     if callback.data == 'recipes':
