@@ -696,10 +696,11 @@ def process_user_data(message):
         number_handler_fit_level(message)  # переходим к выбору уровня
 
     except ValueError:
-        bot.send_message(chat_id, "❌ Ошибка! Используйте цифры в формате: '70 180 25'")
+        msg = bot.send_message(chat_id, "❌ Ошибка! Используйте цифры в формате: '70 180 25'")
+        bot.register_next_step_handler(msg, process_user_data)
     except Exception as e:
-        bot.send_message(chat_id, "❌ Ошибка формата! Введите: вес рост возраст")
-
+        msg = bot.send_message(chat_id, "❌ Ошибка формата! Введите: вес рост возраст")
+        bot.register_next_step_handler(msg, process_user_data)
 
 def number_handler_fit_level(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
