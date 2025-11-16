@@ -301,19 +301,18 @@ scheduler_thread.start()
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(callback):
-    global user_name
     if callback.data == 'profile':
         user_id = callback.from_user.id
         profile = get_user_profile(user_id)
 
-        weight = profile.get('weight', 'Не указан')
-        height = profile.get('height', 'Не указан')
-        age = profile.get('age', 'Не указан')
-        name = profile.get('name', 'Не указано')
-        calories = profile.get('calories', 'Не указано')
-        day_calories = profile.get('day_calories', 0)
+        weight = profile.get('weight', '🚫')
+        height = profile.get('height', '🚫')
+        age = profile.get('age', '🚫')
+        name = profile.get('name', '🚫')
+        calories = profile.get('calories', '🚫')
+        day_calories = profile.get('day_calories', '🍰')
         # Преобразуем уровень подготовки в читаемый вид
-        fitness_level = profile.get('fitness_level', 'Не указан')
+        fitness_level = profile.get('fitness_level', '🚫')
         level_display = {
             'beginner': 'Начинающий🥉',
             'intermediate': 'Продвинутый🥈',
