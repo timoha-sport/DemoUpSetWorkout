@@ -86,7 +86,7 @@ class Calories:
             # Для упражнений на повторения
             calories = base_calories * count * weight_factor
 
-        return round(calories, 1)
+        return round(calories)
 
     @staticmethod
     def add_workout_calories(workout_data, weight):
@@ -105,7 +105,7 @@ class Calories:
                 total_workout_calories += exercise_calories
 
         Calories.daily_calories += total_workout_calories
-        return round(total_workout_calories, 1)
+        return round(total_workout_calories)
 
     @staticmethod
     def add_food_calories(calories):
@@ -125,7 +125,7 @@ class Calories:
         Returns:
             float: калорийность для указанного веса
         """
-        return (calories_per_100g * weight_in_grams) / 100
+        return round((calories_per_100g * weight_in_grams) / 100)
 
     @staticmethod
     def reset_manual():

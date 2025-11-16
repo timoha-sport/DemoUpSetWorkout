@@ -14,8 +14,6 @@ from Workouts import ExerciseCalculator
 from Calories import Calories
 
 bot = telebot.TeleBot("8438729431:AAEZdOQT7de43BWCmDYCVNoeckb4oiIWHTI")
-user_name = ""
-default = "(по умолчанию)"
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -305,17 +303,33 @@ scheduler_thread.start()
 def callback(callback):
     global user_name
     if callback.data == 'profile':
-        help_text = f"""
-        🗿Ваш профиль:
-        ┏Имя: {user_name}
-        ┠Вес: {FitnessCoefficient.weight}{default}
-        ┠Рост: {FitnessCoefficient.height}{default}
-        ┠Возраст: {FitnessCoefficient.age}{default}
-        ┠Уровень: {FitnessCoefficient.fitness_level}
-        ┗Дневная норма: {Calories.daily_calories}/{Calories.calculate_daily_norm(FitnessCoefficient.weight, 
-                FitnessCoefficient.height, FitnessCoefficient.age, FitnessCoefficient.fitness_level)} ккал
-                    """
-        bot.send_message(callback.message.chat.id, text=help_text)
+        user_id = callback.from_user.id
+        profile = get_user_profile(user_id)
+
+        weight = profile.get('weight', 'Не указан')
+        height = profile.get('height', 'Не указан')
+        age = profile.get('age', 'Не указан')
+        name = profile.get('name', 'Не указано')
+        calories = profile.get('calories', 'Не указано')
+        day_calories = profile.get('day_calories', 0)
+        # Преобразуем уровень подготовки в читаемый вид
+        fitness_level = profile.get('fitness_level', 'Не указан')
+        level_display = {
+            'beginner': 'Начинающий🥉',
+            'intermediate': 'Продвинутый🥈',
+            'advanced': 'Профессионал🥇'
+        }.get(fitness_level, fitness_level)
+
+        profile_text = f"""
+    🗿Ваш профиль:
+    ┏Имя: {name}
+    ┠Вес: {weight} кг
+    ┠Рост: {height} см
+    ┠Возраст: {age} лет
+    ┠Уровень: {level_display}
+    ┗Дневная норма: {day_calories}/{calories} ккал
+                """
+        bot.send_message(callback.message.chat.id, profile_text)
 
     if callback.data == 'edit_profile':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -355,12 +369,12 @@ def callback(callback):
         Тренировка: Силовая (Базовая)🦍
 Цель: Развитие максимальной силы.🏆
 Отдых: 90-120 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Strength"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Strength"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.➣Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips()}раз
-3.➣Приседания:  4 подхода по {ExerciseCalculator.calculate_squats()}раз
-4.➣Планка (сек):  3 подхода по {ExerciseCalculator.calculate_plank()}сек
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Strength"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Strength",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Подтягивания: 4 подхода по {ExerciseCalculator.calculate_pullups(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+2.➣Отжимания на брусьях:  4 подхода по {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Приседания:  4 подхода по {ExerciseCalculator.calculate_squats(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Планка (сек):  3 подхода по {ExerciseCalculator.calculate_plank(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} сек
             """
         bot.send_message(callback.message.chat.id, text=strength_text)
     if callback.data == 'functional':
@@ -368,12 +382,12 @@ def callback(callback):
         Тренировка: Функциональная (Взрывная сила)🐂
 Цель: Развитие мощности.🏆
 Отдых: 60-75 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Power"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Power"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Подтягивания с усилием: 4 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.➣Отжимания на брусьях взрывные: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-3.➣Берпи: 3 подхода по {ExerciseCalculator.calculate_burpees()}раз
-4.➣Прыжки из приседа: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Power"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Power",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Подтягивания с усилием: 4 подхода по {ExerciseCalculator.calculate_pullups(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+2.➣Отжимания на брусьях взрывные: 3 подхода по {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Берпи: 3 подхода по {ExerciseCalculator.calculate_burpees(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Прыжки из приседа: 3 подхода по {ExerciseCalculator.calculate_jump_squats(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=functional_text)
     if callback.data == 'wellness':
@@ -381,12 +395,12 @@ def callback(callback):
         Тренировка: Оздоровительная (Для осанки)🦙
 Цель: Укрепление спины и кора.🏆
 Отдых: 30-45 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Posture"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Posture"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time()}сек
-2.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
-3.➣Отжимания на брусьях (медленно): 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-4.➣Планка(сек): 3 подхода по {ExerciseCalculator.calculate_plank()}сек
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Posture"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Posture",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} сек
+2.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Отжимания на брусьях (медленно): 3 подхода по {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Планка(сек): 3 подхода по {ExerciseCalculator.calculate_plank(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} сек
             """
         bot.send_message(callback.message.chat.id, text=wellness_text)
     if callback.data == 'endurance':
@@ -394,12 +408,12 @@ def callback(callback):
          Тренировка: На Выносливость (Круговая)🐫      
 Цель: Развитие выносливости.🏆
 Инструкция: Все упражнения подряд, отдых 2 мин после круга. 3-5 кругов.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Endurance"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Endurance"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Подтягивания (макс. раз)
-2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()} раз)
-3.➣Приседания ({ExerciseCalculator.calculate_squats()} раз)
-4.➣Берпи ({ExerciseCalculator.calculate_burpees()} раз)
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Endurance"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Endurance",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Подтягивания: макс. раз
+2.➣Отжимания на брусьях: {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Приседания: {ExerciseCalculator.calculate_squats(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Берпи: {ExerciseCalculator.calculate_burpees(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=endurance_text)
     if callback.data == 'for_press':
@@ -407,12 +421,12 @@ def callback(callback):
         Тренировка: Для Пресса и Координации🦈
 Цель: Проработка кора.🏆
 Отдых: 45-60 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Core"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Core"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
-2.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
-3.➣Скручивания: 3 подхода по {ExerciseCalculator.calculate_crunches()}раз
-4.➣Велосипед: 3 подхода по {ExerciseCalculator.calculate_bicycle()}раз
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Core"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Core",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+2.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Скручивания: 3 подхода по {ExerciseCalculator.calculate_crunches(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Велосипед: 3 подхода по {ExerciseCalculator.calculate_bicycle(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=for_press_text)
     if callback.data == 'lower_strength':
@@ -420,12 +434,12 @@ def callback(callback):
         Тренировка: Нижняя Сила (Ноги и кор)🦩
 Цель: Развитие низа тела.🏆
 Отдых: 60 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Lower"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Lower"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats()}раз
-2.➣Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats()}раз
-3.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
-4.➣Выпады: 3 подхода по {ExerciseCalculator.calculate_lunges()}раз
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Lower"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Lower",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+2.➣Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Выпады: 3 подхода по {ExerciseCalculator.calculate_lunges(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=lower_strength_text)
     if callback.data == 'combination':
@@ -433,14 +447,14 @@ def callback(callback):
         Тренировка: Связка "Турник + Брусья"🐒
 Цель: Интенсивная проработка верха тела.🏆
 Инструкция: Упражнения парами (суперсеты). Отдых 90 сек после пары.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Superset"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Superset"), FitnessCoefficient.weight)}ккал.🍰
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Superset"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Superset",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
 Суперсет 1 (4 подхода):
-    1.➣Подтягивания ({ExerciseCalculator.calculate_pullups()})
-    2.➣Отжимания на брусьях ({ExerciseCalculator.calculate_dips()})
+    1.➣Подтягивания: {ExerciseCalculator.calculate_pullups(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+    2.➣Отжимания на брусьях: {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
 Суперсет 2 (3 подхода):
-    1.➣Подъем ног в висе ({ExerciseCalculator.calculate_leg_raises()})
-    2.➣Отжимания от пола ({ExerciseCalculator.calculate_pushups()})
+    1.➣Подъем ног в висе: {ExerciseCalculator.calculate_leg_raises(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+    2.➣Отжимания от пола: {ExerciseCalculator.calculate_pushups(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=combination_text)
     if callback.data == 'full_body':
@@ -448,12 +462,12 @@ def callback(callback):
         Тренировка: Фулл-Бади (На все тело)🐊
 Цель: Равномерная проработка.🏆
 Отдых: 60-75 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Full-Body"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Full-Body"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-3.➣Приседания: 3 подхода по {ExerciseCalculator.calculate_squats()}раз
-4.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises()}раз
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Full-Body"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Full-Body",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+2.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Приседания: 3 подхода по {ExerciseCalculator.calculate_squats(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=full_body_text)
     if callback.data == 'street_workout':
@@ -461,12 +475,12 @@ def callback(callback):
         Тренировка: Уличный Воркаут (Статика и динамика)🐆
 Цель: Развитие силовой выносливости.🏆
 Отдых: 90 секунд.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["Street"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Street"), FitnessCoefficient.weight)}ккал.🍰
-1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups()}раз
-2.➣Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support()}раз
-3.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips()}раз
-4.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit()}раз
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["Street"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("Street",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
+1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+2.➣Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+3.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
+4.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit(get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id))} раз
             """
         bot.send_message(callback.message.chat.id, text=street_workout_text)
     if callback.data == 'street_workout':
@@ -474,8 +488,8 @@ def callback(callback):
         Тренировка: ВИИТ (Сжигание калорий)🐅
 Цель: Максимальная интенсивность.🏆
 Инструкция: 40 сек работа / 20 сек отдых. 3-5 кругов.⏱️
-Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(FitnessCoefficient.age)["HIIT"]}уд/мин❤️
-Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("HIIT"), FitnessCoefficient.weight)}ккал.🍰
+Рекомендуемый пульс: {HeartRateCalculator.get_all_workouts_hr(get_user_age(callback.message.chat.id))["HIIT"]}уд/мин❤️
+Калории: {Calories.add_workout_calories(ExerciseCalculator.get_workout("HIIT",get_user_weight(callback.message.chat.id), get_user_height(callback.message.chat.id), get_user_age(callback.message.chat.id), get_user_fitness_level(callback.message.chat.id)), get_user_weight(callback.message.chat.id))}ккал.🍰
 1.➣Берпи
 2.➣Подтягивания (или вис с подъемом колен)
 3.➣Отжимания на брусьях
@@ -563,9 +577,179 @@ def callback(callback):
     if callback.data == 'recipes':
         text = '🍽️Рецепты, от которых ты не поправишься:\n http://propernutritionarnold.tilda.ws/'
         bot.send_message(callback.message.chat.id, text, disable_web_page_preview=True)
-
-
     bot.answer_callback_query(callback.id, text="")
+
+
+USER_FILE = "user_data.json"
+
+
+def load_user_data():
+    """Загружает данные всех пользователей из JSON"""
+    if os.path.exists(USER_FILE):
+        with open(USER_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            # Конвертируем ключи пользователей в int
+            return {int(k): v for k, v in data.items()}
+    return {}
+
+
+def save_user_data(user_data):
+    """Сохраняет данные всех пользователей в JSON"""
+    with open(USER_FILE, 'w', encoding='utf-8') as f:
+        json.dump(user_data, f, ensure_ascii=False, indent=2)
+
+
+def get_user_profile(user_id):
+    """Получает профиль конкретного пользователя"""
+    user_data = load_user_data()
+    return user_data.get(user_id, {})
+
+
+def get_user_weight(user_id):
+    """Получает вес пользователя"""
+    profile = get_user_profile(user_id)
+    return profile.get('weight')
+
+
+def get_user_height(user_id):
+    """Получает рост пользователя"""
+    profile = get_user_profile(user_id)
+    return profile.get('height')
+
+
+def get_user_age(user_id):
+    """Получает возраст пользователя"""
+    profile = get_user_profile(user_id)
+    return profile.get('age')
+
+
+def get_user_fitness_level(user_id):
+    """Получает уровень подготовки пользователя"""
+    profile = get_user_profile(user_id)
+    return profile.get('fitness_level', 'beginner')
+
+def get_day_calories(user_id):
+    profile = get_user_profile(user_id)
+    return profile.get('day_calories')
+
+def update_user_calories(user_id, calories):
+    """Сеттер для обновления веса пользователя"""
+    user_data = load_user_data()
+
+    if user_id not in user_data:
+        user_data[user_id] = {}
+
+    user_data[user_id]['day_calories'] = user_data[user_id]['day_calories'] + calories
+    save_user_data(user_data)
+
+
+def burn_user_calories(user_id, calories):
+    user_data = load_user_data()
+
+    if user_id not in user_data:
+        user_data[user_id] = {}
+
+    user_data[user_id]['day_calories'] = user_data[user_id]['day_calories'] - calories
+    save_user_data(user_data)
+
+def zero_user_calories(user_id):
+    user_data = load_user_data()
+
+    if user_id not in user_data:
+        user_data[user_id] = {}
+
+    user_data[user_id]['day_calories'] = 0
+    save_user_data(user_data)
+
+@bot.message_handler(func=lambda m: m.text == 'Ввести параметры⚙️')
+def number_handler(message):
+    msg = bot.send_message(message.chat.id, "Введите вес(кг), рост(см) и возраст(лет) в таком формате:'70 180 25'")
+    bot.register_next_step_handler(msg, process_user_data)
+
+
+def process_user_data(message):
+    chat_id = message.chat.id
+
+    try:
+        parts = message.text.split(' ', 2)
+        weight = int(parts[0])
+        height = int(parts[1])
+        age = int(parts[2])
+
+        # Загружаем текущие данные
+        user_data = load_user_data()
+
+        # Создаем или обновляем запись пользователя
+        user_data[chat_id] = {
+            'weight': weight,
+            'height': height,
+            'age': age,
+            'name': message.from_user.first_name,
+            'fitness_level': 'beginner',
+            'calories' : Calories.calculate_daily_norm(weight, height, age, get_user_fitness_level(chat_id)),
+            'day_calories' : 0
+        }
+
+        # Сохраняем обратно в JSON
+        save_user_data(user_data)
+
+        bot.send_message(chat_id, f"✅ Данные сохранены!\nВес: {weight}кг\nРост: {height}см\nВозраст: {age}лет")
+        number_handler_fit_level(message)  # переходим к выбору уровня
+
+    except ValueError:
+        bot.send_message(chat_id, "❌ Ошибка! Используйте цифры в формате: '70 180 25'")
+    except Exception as e:
+        bot.send_message(chat_id, "❌ Ошибка формата! Введите: вес рост возраст")
+
+
+def number_handler_fit_level(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add('Профессионал🥇')
+    markup.add('Начинающий🥉', 'Продвинутый🥈')
+    bot.send_message(message.chat.id, "Выбери свой уровень подготовки!💪", reply_markup=markup)
+
+
+@bot.message_handler(func=lambda m: m.text == 'Начинающий🥉')
+def number_handler(message):
+    user_id = message.chat.id
+    FitnessCoefficient.fitness_level = "beginner"
+
+    # Сохраняем уровень подготовки в JSON
+    user_data = load_user_data()
+    if user_id in user_data:
+        user_data[user_id]['fitness_level'] = "beginner"
+        save_user_data(user_data)
+
+    bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!\n Можете вернуться в /menu")
+
+
+@bot.message_handler(func=lambda m: m.text == 'Продвинутый🥈')
+def number_handler(message):
+    user_id = message.chat.id
+    FitnessCoefficient.fitness_level = "intermediate"
+
+    # Сохраняем уровень подготовки в JSON
+    user_data = load_user_data()
+    if user_id in user_data:
+        user_data[user_id]['fitness_level'] = "intermediate"
+        save_user_data(user_data)
+
+    bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!\n Можете вернуться в /menu")
+
+
+@bot.message_handler(func=lambda m: m.text == 'Профессионал🥇')
+def number_handler(message):
+    user_id = message.chat.id
+    FitnessCoefficient.fitness_level = "advanced"
+
+    # Сохраняем уровень подготовки в JSON
+    user_data = load_user_data()
+    if user_id in user_data:
+        user_data[user_id]['fitness_level'] = "advanced"
+        save_user_data(user_data)
+
+    bot.send_message(message.chat.id, text="✅ Профессионал🥇 уровень подготовки сохранён!\n Можете вернуться в /menu")
+
 
 @bot.message_handler(func=lambda m: m.text == 'Добавить ккал🍔')
 def number_handler(message):
@@ -579,15 +763,15 @@ def number_handler_add_calories(message):
         parts = message.text.split(' ', 1)
         calories_per_100g = int(parts[0])
         weight_in_grams = int(parts[1])
-        Calories.daily_calories += Calories.calculate_calories(calories_per_100g, weight_in_grams)
-        bot.send_message(message.chat.id, f"""✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!\n
-Было добавлено: {Calories.calculate_calories(calories_per_100g, weight_in_grams)} ккал""")
+        update_user_calories(message.chat.id, Calories.calculate_calories(calories_per_100g, weight_in_grams))
+        bot.send_message(message.chat.id, f"""✅ Ваше количество ккал на сегодня: {get_day_calories(message.chat.id)}ккал!\n
+Было добавлено: {round((weight_in_grams / 100) * calories_per_100g)} ккал""")
     except ValueError:
         msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных!\nИспользуйте цифры!")
-        bot.register_next_step_handler(msg, number_handler_config)
-    except Exception:
+        bot.register_next_step_handler(msg, number_handler_add_calories)
+    except Exception as e:
         msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nВведите калорийность продукта(грамм) и массу продукта(грамм) через пробел!")
-        bot.register_next_step_handler(msg, number_handler_config)
+        bot.register_next_step_handler(msg, number_handler_add_calories)
 
 @bot.message_handler(func=lambda m: m.text == 'Сжечь ккал🔥')
 def number_handler(message):
@@ -596,65 +780,21 @@ def number_handler(message):
 
 def number_handler_clear(message):
     global default
-    if 0 > Calories.daily_calories - (int(message.text)):
-        bot.send_message(message.chat.id, "❌ Количество калорий больше чем вы можете сжечь!")
-    else:
-        try:
-            Calories.daily_calories -= (int(message.text))
-            bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {Calories.daily_calories}ккал!")
-        except ValueError:
-            bot.send_message(message.chat.id, "❌ Введите корректное число!")
+    try:
+        if 0 > get_day_calories(message.chat.id) - (int(message.text)):
+            msg = bot.send_message(message.chat.id, "❌ Количество калорий больше чем вы можете сжечь!")
+            bot.register_next_step_handler(msg, number_handler_clear)
+        else:
+            burn_user_calories(message.chat.id, int(message.text))
+            bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {round(get_day_calories(message.chat.id))}ккал!")
+    except ValueError:
+        msg = bot.send_message(message.chat.id, "❌ Введите корректное число!")
+        bot.register_next_step_handler(msg, number_handler_clear)
 
 @bot.message_handler(func=lambda m: m.text == 'Обнулить ккал🔄')
 def number_handler(message):
-    Calories.daily_calories = 0
+    zero_user_calories(message.chat.id)
     bot.send_message(message.chat.id, text="🔄Калории обнулены")
-
-@bot.message_handler(func=lambda m: m.text == 'Начинающий🥉')
-def number_handler(message):
-    FitnessCoefficient.fitness_level = "beginner"
-    bot.send_message(message.chat.id, text="✅ Начинающий🥉 уровень подготовки сохранён!\n Можете вернуться в /menu")
-
-@bot.message_handler(func=lambda m: m.text == 'Продвинутый🥈')
-def number_handler(message):
-    FitnessCoefficient.fitness_level = "intermediate"
-    bot.send_message(message.chat.id, text="✅ Продвинутый🥈 уровень подготовки сохранён!\n Можете вернуться в /menu")
-
-@bot.message_handler(func=lambda m: m.text == 'Профессионал🥇')
-def number_handler(message):
-    FitnessCoefficient.fitness_level = "advanced"
-    bot.send_message(message.chat.id, text="✅ Профессионал🥇 уровень подготовки сохранён!\n Можете вернуться в /menu")
-
-
-
-@bot.message_handler(func=lambda m: m.text == "Ввести параметры⚙️")
-def number_handler(message):
-    msg = bot.send_message(message.chat.id, "Введите вес(кг), рост(см) и возраст(лет) в таком формате:'70 180 25'")
-    bot.register_next_step_handler(msg, number_handler_config)
-
-def number_handler_config(message):
-    global default
-    try:
-        parts = message.text.split(' ', 2)
-        FitnessCoefficient.weight = int(parts[0])
-        FitnessCoefficient.height = int(parts[1])
-        FitnessCoefficient.age = int(parts[2])
-        default = ""
-        bot.send_message(message.chat.id, f"""✅ Параметры {FitnessCoefficient.weight}кг, {FitnessCoefficient.height}см, {FitnessCoefficient.age}лет сохранены!""")
-        number_handler_fit_level(message)
-    except ValueError:
-        msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных!\nИспользуйте цифры!")
-        bot.register_next_step_handler(msg, number_handler_config)
-    except Exception:
-        msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nВведите вес(кг), рост(см), возраст(лет) через пробел!")
-        bot.register_next_step_handler(msg, number_handler_config)
-
-def number_handler_fit_level(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add('Профессионал🥇')
-    markup.add('Начинающий🥉', 'Продвинутый🥈')
-    bot.send_message(message.chat.id, "Выбери свой уровень подготовки!💪", reply_markup=markup)
-
 
 @bot.message_handler(content_types=['text'])
 def processing(message):
