@@ -34,6 +34,8 @@ def menu(message):
     markup.add(button_profile)
     button_edit_profile = types.InlineKeyboardButton(text='Изменить профиль⚙️', callback_data='edit_profile')
     markup.add(button_edit_profile)
+    button_plot = types.InlineKeyboardButton(text='Истории Арнольда🦍', callback_data='plot')
+    markup.add(button_plot)
     button_workout = types.InlineKeyboardButton(text='Тренировки💪', callback_data='workout')
     markup.add(button_workout)
     button_notes = types.InlineKeyboardButton(text='Заметки📃', callback_data='notes')
@@ -305,14 +307,14 @@ def callback(callback):
         user_id = callback.from_user.id
         profile = get_user_profile(user_id)
 
+        name = callback.from_user.first_name
         weight = profile.get('weight', '🚫')
         height = profile.get('height', '🚫')
         age = profile.get('age', '🚫')
-        name = profile.get('name', '🚫')
         calories = profile.get('calories', '🚫')
         day_calories = profile.get('day_calories', '🍰')
-        # Преобразуем уровень подготовки в читаемый вид
         fitness_level = profile.get('fitness_level', '🚫')
+        bananas = profile.get('bananas', '🚫')
         level_display = {
             'beginner': 'Начинающий🥉',
             'intermediate': 'Продвинутый🥈',
@@ -322,6 +324,7 @@ def callback(callback):
         profile_text = f"""
     🗿Ваш профиль:
     ┏Имя: {name}
+    ┠Бананы: {bananas} 🍌
     ┠Вес: {weight} кг
     ┠Рост: {height} см
     ┠Возраст: {age} лет
@@ -564,6 +567,121 @@ def callback(callback):
         markup.add(button_bicycle)
         bot.send_message(callback.message.chat.id, text='Без инвентаря', reply_markup=markup, parse_mode='html')
 
+    if callback.data == 'plot':
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button_check = types.InlineKeyboardButton(text='Отметиться🍌', callback_data='check')
+        button_legends = types.InlineKeyboardButton(text='Легенды Арни✨', callback_data='legends')
+        markup.add(button_check, button_legends)
+        bot.send_message(callback.message.chat.id, text='Истории Арнольда🦍', reply_markup=markup, parse_mode='html')
+
+    if callback.data == 'h1':
+        if get_bananas(callback.from_user.id) > 0:
+            text = """В густых лесах Австрии родился необычный детеныш. Пока другие малыши качались на лианах, \
+этот будущий король железа поднимал... молочные бидоны на семейной ферме! Его первым «тренажером» было ведро с водой, \
+а первой «диетой» — овсянка, яйца и свежее молоко, чтобы вырасти большим и сильным, как дуб.
+Урок: Основы закладываются с простого. Не нужно суперсложных программ или диет. Начни с базовых упражнений и \
+качественных натуральных продуктов. Молоко и яйца — твои первые союзники."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h2':
+        if get_bananas(callback.from_user.id) > 2:
+            text = """Подростком Горилла-Арнольд впервые попал в городскую «каменную рощу» — тренажерный зал. Там пахло \
+потом и ржавым железом. Он был тощим, как лиана, но его глаза горели. Он не знал программ, поэтому просто повторял за \
+старшими, слушал их советы и не боялся казаться слабым.
+Урок: Не бойся начать. Все когда-то были новичками. Иди в зал, смотри, учись, задавай вопросы. Сообщество и постоянство — ключ."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h3':
+        if get_bananas(callback.from_user.id) > 4:
+            text = """Внутри каждого живет Лентяй-Горилла, который шепчет: «Останься в пещере, поспи, съешь перезрелый\
+банан». Молодой Арнольд каждый день боролся с ним. Он придумал правило: «Не думай, иди». Как только солнце вставало — \
+он уже бежал к реке, а потом в зал, не позволяя сомнениям себя остановить.
+Урок: Дисциплина побеждает мотивацию. Не жри вдохновения. Создай распорядок и следуй ему, даже когда не хочется. «Не \
+думай, иди» — лучшее правило."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h4':
+        if get_bananas(callback.from_user.id) > 6:
+            text = """Арнольд рос, но мышцы не появлялись просто так. Он узнал, что мышцы — это дом, а питание — \
+стройматериалы. Он ел 6 раз в день: куриные грудки, говядину, рыбу, творог, рис, овощи. «Это не еда, это топливо \
+для завоевания мира!» — рычал он, собирая обеденные контейнеры.
+Урок: Ты — то, что ты ешь. Белок — фундамент мышц. Сложные углеводы — энергия. Дробное питание поддерживает \
+метаболизм. Готовь еду заранее."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h5':
+        if get_bananas(callback.from_user.id) > 9:
+            text = """Однажды, поднимая огромный камень, Арнольд понял: важно не просто махать железом, а чувствовать \
+мышцу. Он начал концентрироваться на каждом подъеме и опускании, представляя, как целевая мышца наливается силой. \
+Это был переломный момент — его мышцы стали расти быстрее!
+Урок: Качество важнее количества. Выполняй упражнения с идеальной техникой и ментальной связью «мозг-мышца». 10 \
+осознанных повторений лучше 30 бессмысленных."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h6':
+        if get_bananas(callback.from_user.id) > 14:
+            text = """На пути к титулу «Мистер Олимпия» Арнольду встретился коварный Сахарный Демон, предлагающий \
+сладкие напитки и пироги. Они давали быструю энергию, но потом нападала усталость и жировые отложения. Арнольд изгнал\
+ демона, заменив его фруктами, орехами и водой.
+Урок: Сахар — скрытый враг. Он нарушает энергетический баланс и мешает рельефу. Пей воду, контролируй углеводы, \
+выбирай полезные снеки."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h7':
+        if get_bananas(callback.from_user.id) > 19:
+            text = """Измученный бесконечными тренировками, Арнольд стал слабеть. Мудрый Сонный Йети \
+(олицетворение отдыха) объяснил: «Мышцы растут не в зале, а когда ты спишь!» Арнольд начал спать по 8-9 часов в полной \
+темноте, и его сила выросла в разы.
+Урок: Восстановление — часть тренировки. Сон 7-9 часов, дни отдыха, растяжка — это не лень, а необходимость для роста \
+и прогресса."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h8':
+        if get_bananas(callback.from_user.id) > 29:
+            text = """С мешком бананов (своих сбережений) и стальным сердцем Горилла-Арнольд отправился в Америку. \
+Там его ждали огромные «бетонные джунгли», конкуренты и тяжелая работа. Но его дисциплина, питание и упорство сделали \
+его королем. Он доказал: невозможного нет.
+Урок: Ставь большие цели. Выходи из зоны комфорта. Путь будет тяжелым, но системный подход (тренировки, питание, режим) \
+приведет к любой вершине."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h9':
+        if get_bananas(callback.from_user.id) > 49:
+            text = """Став чемпионом, Арнольд понял, что сила — не только в мышцах. Он занялся изучением разума, \
+бизнесом, творчеством. «Тело, разум, дух — как три головы гориллы. Развивай их все, иначе будешь неустойчив», — говорил он.
+Урок: Гармония — высшая стадия. Тренируй не только тело, но и мозг (чтение, учеба), находи хобби, работай над \
+эмоциональным здоровьем. Ты — больше, чем твои бицепсы."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+    if callback.data == 'h10':
+        if get_bananas(callback.from_user.id) > 99:
+            text = """Теперь Горилла-Арнольд — мудрый вожак. Его миссия — передать знания новым поколениям. «Самое \
+важное — не сколько ты поднял, а сколько людей ты вдохновил подняться. Будь сильным, чтобы помогать другим. Вот истинная сила».
+Урок: Стань примером. Делись знаниями, поддерживай новичков в зале, создавай свое комьюнити. Величайшая победа — \
+сделать сильнее не только себя, но и тех, кто вокруг."""
+            photo = open(r"D:\Рабочий стол\Разное\6e020060b1d911f0b0818ec0c566578f_1.jpg", 'rb')
+            bot.send_photo(callback.from_user.id, photo, text, parse_mode='html')
+        else:
+            bot.send_message(callback.message.chat.id, text='У вас недостаточно бананов!🍌')
+
     if callback.data == 'calories':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button_burn_zero = types.InlineKeyboardButton(text='Обнулить ккал🔄', callback_data='zero_calories')
@@ -593,37 +711,31 @@ def load_user_data():
 
 
 def save_user_data(user_data):
-    """Сохраняет данные всех пользователей в JSON"""
     with open(USER_FILE, 'w', encoding='utf-8') as f:
         json.dump(user_data, f, ensure_ascii=False, indent=2)
 
 
 def get_user_profile(user_id):
-    """Получает профиль конкретного пользователя"""
     user_data = load_user_data()
     return user_data.get(user_id, {})
 
 
 def get_user_weight(user_id):
-    """Получает вес пользователя"""
     profile = get_user_profile(user_id)
     return profile.get('weight')
 
 
 def get_user_height(user_id):
-    """Получает рост пользователя"""
     profile = get_user_profile(user_id)
     return profile.get('height')
 
 
 def get_user_age(user_id):
-    """Получает возраст пользователя"""
     profile = get_user_profile(user_id)
     return profile.get('age')
 
 
 def get_user_fitness_level(user_id):
-    """Получает уровень подготовки пользователя"""
     profile = get_user_profile(user_id)
     return profile.get('fitness_level', 'beginner')
 
@@ -631,8 +743,11 @@ def get_day_calories(user_id):
     profile = get_user_profile(user_id)
     return profile.get('day_calories')
 
+def get_bananas(user_id):
+    profile = get_user_profile(user_id)
+    return profile.get('bananas')
+
 def update_user_calories(user_id, calories):
-    """Сеттер для обновления веса пользователя"""
     user_data = load_user_data()
 
     if user_id not in user_data:
@@ -640,7 +755,6 @@ def update_user_calories(user_id, calories):
 
     user_data[user_id]['day_calories'] = user_data[user_id]['day_calories'] + calories
     save_user_data(user_data)
-
 
 def burn_user_calories(user_id, calories):
     user_data = load_user_data()
@@ -658,6 +772,15 @@ def zero_user_calories(user_id):
         user_data[user_id] = {}
 
     user_data[user_id]['day_calories'] = 0
+    save_user_data(user_data)
+
+def update_user_bananas(user_id):
+    user_data = load_user_data()
+
+    if user_id not in user_data:
+        user_data[user_id] = {}
+
+    user_data[user_id]['bananas'] = user_data[user_id]['bananas'] + 1
     save_user_data(user_data)
 
 @bot.message_handler(func=lambda m: m.text == 'Ввести параметры⚙️')
@@ -680,13 +803,14 @@ def process_user_data(message):
 
         # Создаем или обновляем запись пользователя
         user_data[chat_id] = {
+            'name': message.from_user.first_name,
             'weight': weight,
             'height': height,
             'age': age,
-            'name': message.from_user.first_name,
             'fitness_level': 'beginner',
             'calories' : Calories.calculate_daily_norm(weight, height, age, get_user_fitness_level(chat_id)),
-            'day_calories' : 0
+            'day_calories' : 0,
+            'bananas' : 0
         }
 
         # Сохраняем обратно в JSON
@@ -751,50 +875,173 @@ def number_handler(message):
     bot.send_message(message.chat.id, text="✅ Профессионал🥇 уровень подготовки сохранён!\n Можете вернуться в /menu")
 
 
+def check_profile_exists(user_id, send_message=False):
+    """Проверяет, существует ли профиль пользователя"""
+    user_data = load_user_data()
+
+    if user_id not in user_data:
+        return False
+
+    profile = user_data[user_id]
+    # Проверяем наличие обязательных полей
+    required_fields = ['weight', 'height', 'age', 'name']
+    for field in required_fields:
+        if field not in profile:
+            return False
+    return True
+
 @bot.message_handler(func=lambda m: m.text == 'Добавить ккал🍔')
 def number_handler(message):
-    text = f"""🍔Введите калорийность продукта на 100г и через пробел массу продукта.
+    try:
+        # Проверяем наличие профиля
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+
+        text = f"""🍔Введите калорийность продукта на 100г и через пробел массу продукта.
 Пример: 150 52"""
-    msg = bot.send_message(message.chat.id, text)
-    bot.register_next_step_handler(msg, number_handler_add_calories)
+        msg = bot.send_message(message.chat.id, text)
+        bot.register_next_step_handler(msg, number_handler_add_calories)
+    except ValueError as e:
+        bot.send_message(message.chat.id, str(e))
+
 
 def number_handler_add_calories(message):
     try:
+        # Проверяем наличие профиля
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+
         parts = message.text.split(' ', 1)
         calories_per_100g = int(parts[0])
         weight_in_grams = int(parts[1])
-        update_user_calories(message.chat.id, Calories.calculate_calories(calories_per_100g, weight_in_grams))
-        bot.send_message(message.chat.id, f"""✅ Ваше количество ккал на сегодня: {get_day_calories(message.chat.id)}ккал!\n
-Было добавлено: {round((weight_in_grams / 100) * calories_per_100g)} ккал""")
-    except ValueError:
-        msg = bot.send_message(message.chat.id, "❌ Ошибка типа данных!\nИспользуйте цифры!")
-        bot.register_next_step_handler(msg, number_handler_add_calories)
+        calories_to_add = Calories.calculate_calories(calories_per_100g, weight_in_grams)
+
+        update_user_calories(message.chat.id, calories_to_add)
+        day_calories = get_day_calories(message.chat.id)
+
+        if day_calories is None:
+            raise ValueError("❌ Ошибка загрузки данных профиля!")
+
+        bot.send_message(message.chat.id,
+                         f"""✅ Ккал добавлены!\n\n✅ Ваше количество ккал на сегодня: {day_calories}ккал!\n
+Было добавлено: {calories_to_add} ккал""")
+    except ValueError as e:
+        msg = bot.send_message(message.chat.id, str(e))
+        if "Сначала создайте профиль" not in str(e) and "Ошибка загрузки" not in str(e):
+            bot.register_next_step_handler(msg, number_handler_add_calories)
     except Exception as e:
-        msg = bot.send_message(message.chat.id, "❌ Ошибка формата! \nВведите калорийность продукта(грамм) и массу продукта(грамм) через пробел!")
+        msg = bot.send_message(message.chat.id,
+                               "❌ Ошибка формата! \nВведите калорийность продукта(грамм) и массу продукта(грамм) через пробел!")
         bot.register_next_step_handler(msg, number_handler_add_calories)
+
 
 @bot.message_handler(func=lambda m: m.text == 'Сжечь ккал🔥')
 def number_handler(message):
-    msg = bot.send_message(message.chat.id, "🔥Введите количество сожженных ккал:")
-    bot.register_next_step_handler(msg, number_handler_clear)
+    try:
+        # Проверяем наличие профиля
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+
+        msg = bot.send_message(message.chat.id, "🔥Введите количество сожженных ккал:")
+        bot.register_next_step_handler(msg, number_handler_clear)
+    except ValueError as e:
+        bot.send_message(message.chat.id, str(e))
+
 
 def number_handler_clear(message):
-    global default
     try:
-        if 0 > get_day_calories(message.chat.id) - (int(message.text)):
-            msg = bot.send_message(message.chat.id, "❌ Количество калорий больше чем вы можете сжечь!")
+        # Проверяем наличие профиля
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+
+        calories_to_burn = int(message.text)
+        day_calories = get_day_calories(message.chat.id)
+
+        if day_calories is None:
+            raise ValueError("❌ Ошибка загрузки данных профиля!")
+
+        if calories_to_burn > day_calories:
+            raise ValueError(f"❌ Вы не можете сжечь {calories_to_burn} ккал! Доступно только {day_calories} ккал.")
+
+        burn_user_calories(message.chat.id, calories_to_burn)
+        new_day_calories = get_day_calories(message.chat.id)
+        bot.send_message(message.chat.id,
+                         f"✅ Ккал сожжены!\n\n✅ Ваше количество ккал на сегодня: {new_day_calories}ккал!")
+    except ValueError as e:
+        msg = bot.send_message(message.chat.id, str(e))
+        if "Сначала создайте профиль" not in str(e) and "Ошибка загрузки" not in str(e):
             bot.register_next_step_handler(msg, number_handler_clear)
-        else:
-            burn_user_calories(message.chat.id, int(message.text))
-            bot.send_message(message.chat.id, f"✅ Ваше количество ккал на сегодня: {round(get_day_calories(message.chat.id))}ккал!")
-    except ValueError:
+    except Exception:
         msg = bot.send_message(message.chat.id, "❌ Введите корректное число!")
         bot.register_next_step_handler(msg, number_handler_clear)
 
+
 @bot.message_handler(func=lambda m: m.text == 'Обнулить ккал🔄')
 def number_handler(message):
-    zero_user_calories(message.chat.id)
-    bot.send_message(message.chat.id, text="🔄Калории обнулены")
+    try:
+        # Проверяем наличие профиля
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+
+        zero_user_calories(message.chat.id)
+        bot.send_message(message.chat.id, "🔄Калории обнулены")
+    except ValueError as e:
+        bot.send_message(message.chat.id, str(e))
+
+
+@bot.message_handler(func=lambda m: m.text == 'Отметиться🍌')
+def number_handler(message):
+    try:
+        # Проверяем наличие профиля
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+
+        update_user_bananas(message.chat.id)
+        arr = ['+1 🍌 в твою копилку!', 'БА-НА-НА! Сила прибывает!', 'Банановая мощь твоя!',
+               'Заслуженный банан! Прямо в дело!', 'Хорошая работа! Банан на деревце!',
+               'Еще один шаг к легенде! +1 🍌', 'Железо покорено, банан получен!']
+
+        import random
+        message_text = random.choice(arr)
+        current_bananas = get_bananas(message.chat.id)
+
+        if current_bananas is None:
+            raise ValueError("❌ Ошибка загрузки данных профиля!")
+
+        full_message = f"{message_text}\n\nТвой баланс бананов: {current_bananas} 🍌"
+        bot.send_message(message.chat.id, text=full_message)
+    except ValueError as e:
+        bot.send_message(message.chat.id, str(e))
+
+@bot.message_handler(func=lambda m: m.text == 'Легенды Арни✨')
+def number_handler(message):
+    try:
+        if not check_profile_exists(message.chat.id, send_message=False):
+            raise ValueError("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+        markup = types.InlineKeyboardMarkup()
+        button_h1 = types.InlineKeyboardButton(text='🍌 История 1: Рождение Стального Гориллы', callback_data='h1')
+        markup.add(button_h1)
+        button_h2 = types.InlineKeyboardButton(text='🍌x3 История 2: Первый поход в «Каменный Лес»', callback_data='h2')
+        markup.add(button_h2)
+        button_h3 = types.InlineKeyboardButton(text='🍌x5 История 3: Битва с Лентяй-Гориллой', callback_data='h3')
+        markup.add(button_h3)
+        button_h4 = types.InlineKeyboardButton(text='🍌x7 История 4: Секрет «Стройматериалов»', callback_data='h4')
+        markup.add(button_h4)
+        button_h5 = types.InlineKeyboardButton(text='🍌x10 История 5: Тайна «Умных Повторений»', callback_data='h5')
+        markup.add(button_h5)
+        button_h6 = types.InlineKeyboardButton(text='🍌x15 История 6: Война с Сахарным Демоном', callback_data='h6')
+        markup.add(button_h6)
+        button_h7 = types.InlineKeyboardButton(text='🍌x20 История 7: Союз с Сонным Йети', callback_data='h7')
+        markup.add(button_h7)
+        button_h8 = types.InlineKeyboardButton(text='🍌x30 История 8: Завоевание «Бетонных Джунглей»', callback_data='h8')
+        markup.add(button_h8)
+        button_h9 = types.InlineKeyboardButton(text='🍌x50 История 9: Философия «Баланса Жизни»', callback_data='h9')
+        markup.add(button_h9)
+        button_h10 = types.InlineKeyboardButton(text='🍌x100 История 10: Наследие Железного Гориллы', callback_data='h10')
+        markup.add(button_h10)
+        bot.send_message(message.chat.id, text='――――――――Легенды Арни✨――――――――', reply_markup=markup, parse_mode='html')
+    except ValueError as e:
+        bot.send_message(message.chat.id, str(e))
 
 @bot.message_handler(content_types=['text'])
 def processing(message):
