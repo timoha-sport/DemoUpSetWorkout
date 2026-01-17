@@ -464,8 +464,113 @@ async def show_workout_detail(callback: types.CallbackQuery):
                 f"3.➣Берпи: 3 подхода по {ExerciseCalculator.calculate_burpees(weight, height, age, fitness_level)} раз",
                 f"4.➣Прыжки из приседа: 3 подхода по {ExerciseCalculator.calculate_jump_squats(weight, height, age, fitness_level)} раз"
             ]
+        },
+        "wellness": {
+            "name": "Оздоровительная (Для осанки)🦙",
+            "goal": "Укрепление спины и кора.🏆",
+            "rest": "30-45 секунд.⏱️",
+            "hr_key": "Posture",
+            "workout_type": "Posture",
+            "exercises": [
+                f"1.➣Вис на турнике(сек): 3 подхода по {ExerciseCalculator.calculate_hang_time(weight, height, age, fitness_level)} сек",
+                f"2.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises(weight, height, age, fitness_level)} раз",
+                f"3.➣Отжимания на брусьях (медленно): 3 подхода по {ExerciseCalculator.calculate_dips(weight, height, age, fitness_level)} раз",
+                f"4.➣Планка(сек): 3 подхода по {ExerciseCalculator.calculate_plank(weight, height, age, fitness_level)} сек"
+            ]
+        },
+        "endurance": {
+            "name": "На Выносливость (Круговая)🐫",
+            "goal": "Развитие выносливости.🏆",
+            "rest": "Инструкция: Все упражнения подряд, отдых 2 мин после круга. 3-5 кругов.⏱️",
+            "hr_key": "Endurance",
+            "workout_type": "Endurance",
+            "exercises": [
+                f"1.➣Подтягивания: макс. раз",
+                f"2.➣Отжимания на брусьях: {ExerciseCalculator.calculate_dips(weight, height, age, fitness_level)} раз",
+                f"3.➣Приседания: {ExerciseCalculator.calculate_squats(weight, height, age, fitness_level)} раз",
+                f"4.➣Берпи: {ExerciseCalculator.calculate_burpees(weight, height, age, fitness_level)} раз"
+            ]
+        },
+        "for_press": {
+            "name": "Для Пресса и Координации🦈",
+            "goal": "Проработка кора.🏆",
+            "rest": "45-60 секунд.⏱️",
+            "hr_key": "Core",
+            "workout_type": "Core",
+            "exercises": [
+                f"1.➣Подъем ног в висе: 4 подхода по {ExerciseCalculator.calculate_leg_raises(weight, height, age, fitness_level)} раз",
+                f"2.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit(weight, height, age, fitness_level)} раз",
+                f"3.➣Скручивания: 3 подхода по {ExerciseCalculator.calculate_crunches(weight, height, age, fitness_level)} раз",
+                f"4.➣Велосипед: 3 подхода по {ExerciseCalculator.calculate_bicycle(weight, height, age, fitness_level)} раз"
+            ]
+        },
+        "lower_strength": {
+            "name": "Нижняя Сила (Ноги и кор)🦩",
+            "goal": "Развитие низа тела.🏆",
+            "rest": "60 секунд.⏱️",
+            "hr_key": "Lower",
+            "workout_type": "Lower",
+            "exercises": [
+                f"1.➣Приседания на одной ноге (с опорой): 4 подхода по {ExerciseCalculator.calculate_pistol_squats(weight, height, age, fitness_level)} раз",
+                f"2.➣Выпрыгивания: 3 подхода по {ExerciseCalculator.calculate_jump_squats(weight, height, age, fitness_level)} раз",
+                f"3.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises(weight, height, age, fitness_level)} раз",
+                f"4.➣Выпады: 3 подхода по {ExerciseCalculator.calculate_lunges(weight, height, age, fitness_level)} раз"
+            ]
+        },
+        "combination": {
+            "name": 'Связка "Турник + Брусья"🐒',
+            "goal": "Интенсивная проработка верха тела.🏆",
+            "rest": "Инструкция: Упражнения парами (суперсеты). Отдых 90 сек после пары.⏱️",
+            "hr_key": "Superset",
+            "workout_type": "Superset",
+            "exercises": [
+                f"Суперсет 1 (4 подхода):",
+                f"    1.➣Подтягивания: {ExerciseCalculator.calculate_pullups(weight, height, age, fitness_level)} раз",
+                f"    2.➣Отжимания на брусьях: {ExerciseCalculator.calculate_dips(weight, height, age, fitness_level)} раз",
+                f"Суперсет 2 (3 подхода):",
+                f"    1.➣Подъем ног в висе: {ExerciseCalculator.calculate_leg_raises(weight, height, age, fitness_level)} раз",
+                f"    2.➣Отжимания от пола: {ExerciseCalculator.calculate_pushups(weight, height, age, fitness_level)} раз"
+            ]
+        },
+        "full_body": {
+            "name": "Фулл-Бади (На все тело)🐊",
+            "goal": "Равномерная проработка.🏆",
+            "rest": "60-75 секунд.⏱️",
+            "hr_key": "Full-Body",
+            "workout_type": "Full-Body",
+            "exercises": [
+                f"1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups(weight, height, age, fitness_level)} раз",
+                f"2.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips(weight, height, age, fitness_level)} раз",
+                f"3.➣Приседания: 3 подхода по {ExerciseCalculator.calculate_squats(weight, height, age, fitness_level)} раз",
+                f"4.➣Подъем ног в висе: 3 подхода по {ExerciseCalculator.calculate_leg_raises(weight, height, age, fitness_level)} раз"
+            ]
+        },
+        "street_workout": {
+            "name": "Уличный Воркаут (Статика и динамика)🐆",
+            "goal": "Развитие силовой выносливости.🏆",
+            "rest": "90 секунд.⏱️",
+            "hr_key": "Street",
+            "workout_type": "Street",
+            "exercises": [
+                f"1.➣Подтягивания: 3 подхода по {ExerciseCalculator.calculate_pullups(weight, height, age, fitness_level)} раз",
+                f"2.➣Передний вис на брусьях: 3 подхода по {ExerciseCalculator.calculate_front_support(weight, height, age, fitness_level)} раз",
+                f"3.➣Отжимания на брусьях: 3 подхода по {ExerciseCalculator.calculate_dips(weight, height, age, fitness_level)} раз",
+                f"4.➣Уголок на брусьях: 3 подхода по {ExerciseCalculator.calculate_l_sit(weight, height, age, fitness_level)} раз"
+            ]
+        },
+        "calorie_burning": {
+            "name": "ВИИТ (Сжигание калорий)🐅",
+            "goal": "Максимальная интенсивность.🏆",
+            "rest": "Инструкция: 40 сек работа / 20 сек отдых. 3-5 кругов.⏱️",
+            "hr_key": "HIIT",
+            "workout_type": "HIIT",
+            "exercises": [
+                f"1.➣Берпи",
+                f"2.➣Подтягивания (или вис с подъемом колен)",
+                f"3.➣Отжимания на брусьях",
+                f"4.➣Приседания с выпрыгиванием"
+            ]
         }
-        # ... добавьте остальные тренировки по аналогии
     }
 
     workout = workout_map.get(callback.data)
@@ -910,3 +1015,141 @@ async def add_calories_process(message: types.Message, state: FSMContext):
         update_user_field(user_id, 'day_calories', new_calories)
 
         await message.answer(
+            f"""✅ Ккал добавлены!\n\n✅ Ваше количество ккал на сегодня: {new_calories}ккал!\n
+Было добавлено: {calories_to_add} ккал"""
+        )
+        await state.clear()
+
+    except ValueError:
+        await message.answer("❌ Ошибка формата! Введите два числа через пробел")
+
+
+@dp.message(F.text == "Сжечь ккал🔥")
+async def burn_calories_start(message: types.Message, state: FSMContext):
+    """Начать сжигание калорий"""
+    if not check_profile_exists(message.from_user.id):
+        await message.answer("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+        return
+
+    await message.answer("🔥Введите количество сожженных ккал:")
+    await state.set_state(CalorieStates.waiting_for_calories_burn)
+
+
+@dp.message(CalorieStates.waiting_for_calories_burn)
+async def burn_calories_process(message: types.Message, state: FSMContext):
+    """Обработать сжигание калорий"""
+    try:
+        calories_to_burn = int(message.text)
+        user_id = message.from_user.id
+
+        day_calories = get_user_field(user_id, 'day_calories', 0)
+
+        if calories_to_burn > day_calories:
+            await message.answer(
+                f"❌ Вы не можете сжечь {calories_to_burn} ккал! Доступно только {day_calories} ккал."
+            )
+            return
+
+        new_calories = day_calories - calories_to_burn
+        update_user_field(user_id, 'day_calories', new_calories)
+
+        await message.answer(
+            f"✅ Ккал сожжены!\n\n✅ Ваше количество ккал на сегодня: {new_calories}ккал!"
+        )
+        await state.clear()
+
+    except ValueError:
+        await message.answer("❌ Введите корректное число!")
+
+
+@dp.message(F.text == "Обнулить ккал🔄")
+async def zero_calories(message: types.Message):
+    """Обнулить калории"""
+    if not check_profile_exists(message.from_user.id):
+        await message.answer("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+        return
+
+    update_user_field(message.from_user.id, 'day_calories', 0)
+    await message.answer("🔄Калории обнулены")
+
+
+# ====================== ОБРАБОТЧИКИ ОСТАЛЬНОГО ======================
+
+@dp.message(F.text == "Отметиться🍌")
+async def check_in(message: types.Message):
+    """Отметиться и получить банан"""
+    if not check_profile_exists(message.from_user.id):
+        await message.answer("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+        return
+
+    user_id = message.from_user.id
+    current_bananas = get_user_field(user_id, 'bananas', 0)
+    new_bananas = current_bananas + 1
+
+    update_user_field(user_id, 'bananas', new_bananas)
+
+    arr = [
+        '+1 🍌 в твою копилку!',
+        'БА-НА-НА! Сила прибывает!',
+        'Банановая мощь твоя!',
+        'Заслуженный банан! Прямо в дело!',
+        'Хорошая работа! Банан на деревце!',
+        'Еще один шаг к легенде! +1 🍌',
+        'Железо покорено, банан получен!'
+    ]
+
+    message_text = random.choice(arr)
+    full_message = f"{message_text}\n\nТвой баланс бананов: {new_bananas} 🍌"
+    await message.answer(full_message)
+
+
+@dp.message(F.text == "Легенды Арни✨")
+async def show_legends_menu(message: types.Message):
+    """Показать меню легенд"""
+    if not check_profile_exists(message.from_user.id):
+        await message.answer("❌ Сначала создайте профиль в разделе 'Изменить профиль⚙️'!")
+        return
+
+    await message.answer(
+        text='――――――――Легенды Арни✨――――――――',
+        reply_markup=get_legends_keyboard()
+    )
+
+
+# ====================== ФУНКЦИЯ ДЛЯ ПРОВЕРКИ НАПОМИНАНИЙ ======================
+
+async def check_reminders():
+    """Фоновая задача для проверки напоминаний"""
+    while True:
+        now = datetime.now()
+        current_day = ['понедельник', 'вторник', 'среда', 'четверг',
+                       'пятница', 'суббота', 'воскресенье'][now.weekday()]
+        current_time = now.strftime('%H:%M')
+
+        for user_id, reminders in user_reminders.items():
+            for rem in reminders:
+                if rem['day'] == current_day and rem['time'] == current_time:
+                    try:
+                        await bot.send_message(
+                            user_id,
+                            f"🔔 Напоминание: {rem['text']}"
+                        )
+                    except Exception as e:
+                        logger.error(f"Error sending reminder to {user_id}: {e}")
+
+        await asyncio.sleep(60)  # Проверяем каждую минуту
+
+
+# ====================== ЗАПУСК БОТА ======================
+
+async def main():
+    """Основная функция запуска бота"""
+    # Запускаем фоновую задачу проверки напоминаний
+    asyncio.create_task(check_reminders())
+
+    logger.info("Бот запущен!")
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
